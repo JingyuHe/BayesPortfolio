@@ -10,3 +10,7 @@ arma::mat hat_matrix(arma::mat& W);
 
 
 double squared_error(arma::mat& Y, arma::mat& X);
+
+arma::mat rmatNorm(arma::mat& M, arma::mat& U, arma::mat& V);
+
+

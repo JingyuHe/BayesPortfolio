@@ -51,3 +51,22 @@ double squared_error(arma::mat& Y, arma::mat& X){
   double output = arma::as_scalar(res.t() * res);
   return output;
 }
+
+
+arma::mat rmatNorm(arma::mat& M, arma::mat& U, arma::mat& V){
+  // M mean
+  // U between row covariance
+  // V between column covariance
+  size_t n = M.n_rows;
+  size_t p = M.n_cols;
+  arma::mat X = arma::randn(n, p);
+
+  arma::mat A = arma::chol(U, "lower");
+
+  arma::mat B = arma::chol(V, "lower");
+
+  arma::mat output = M + A * X * B;
+
+  return output;
+}
+
