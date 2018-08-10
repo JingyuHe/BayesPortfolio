@@ -1,7 +1,7 @@
 #include "../inst/include/utility.h"
 
 // [[Rcpp::export]]
-List rmultireg(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V) {
+List rmultireg_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V) {
 
 // Keunwoo Kim 09/09/2014
 
@@ -49,6 +49,24 @@ List rmultireg(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, ar
   
   List rwout = rwishart_bayesm(nu+n, VSinv);
   
+//   mat CI2 = zeros<mat>(m, m);
+//   vec residual_variance(m);
+//   for(size_t i = 0; i < m; i ++ ){
+//       // sample each variables
+//       residual_variance[i] = 1.0 / rgamma(1, nu + n, (nu + n) / (nu * V(i, i) + n * S(i, i)))[0];
+//   }
+
+//   CI2.diag() = residual_variance;
+
+  // rwout contains
+  // W: Wishart draw
+  // IW: Inverse Wishart draw
+  // C: W = CC^{T}
+  // CI: W^{-1} = CICI^{T}
+
+
+
+  
   // now draw B given Sigma
   //   note beta ~ N(vec(Btilde),Sigma (x) Covxxa)
   //       Cov=(X'X + A)^-1  = IR t(IR)  
@@ -59,6 +77,7 @@ List rmultireg(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, ar
   //	since vec(ABC) = (C' (x) A)vec(B), we have 
   //		B = Btilde + IR Z_mk CI'
 
+
   mat CI = rwout["CI"]; //there is no need to use as<mat>(rwout["CI"]) since CI is being initiated as a mat in the same line
   mat draw = mat(rnorm(k*m));
   draw.reshape(k,m);
@@ -66,5 +85,7 @@ List rmultireg(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, ar
     
   return List::create(
       Named("B") = B, 
-      Named("Sigma") = rwout["IW"]);
+      Named("Sigma") = rwout["IW"]
+    //   Named("Sigma2") = CI2 * CI2.t()
+  );
 }
