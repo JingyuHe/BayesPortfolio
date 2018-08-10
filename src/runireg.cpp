@@ -1,11 +1,8 @@
 #include "../inst/include/utility.h"
-
-// using namespace arma;
-// using namespace Rcpp;
-
+  
 // [[Rcpp::export]]
-List runiregGibbs_rcpp_loop(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, 
-                      double sigmasq, int R, int keep, int nprint) {
+List runireg(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, 
+                  int R, int keep, int nprint) {
 
 // Keunwoo Kim 09/09/2014
 
@@ -26,14 +23,14 @@ List runiregGibbs_rcpp_loop(arma::vec const& y, arma::mat const& X, arma::vec co
 //  X is n x k
 //  beta is k x 1 vector of coefficients
 
-// Prior: 
+// Prior:  
 //  beta ~ N(betabar,sigmasq*A^-1)
 //  sigmasq ~ (nu*ssq)/chisq_nu
-// 
+
   int mkeep;
-  double s;
+  double s, sigmasq;
   mat RA, W, IR;
-  vec z, btilde, beta;
+  vec z, btilde, res, beta;
   
   int nvar = X.n_cols;
   int nobs = y.size();
@@ -41,28 +38,29 @@ List runiregGibbs_rcpp_loop(arma::vec const& y, arma::mat const& X, arma::vec co
   vec sigmasqdraw(R/keep);
   mat betadraw(R/keep, nvar);
   
-  mat XpX = trans(X)*X;
-  vec Xpy = trans(X)*y;
-  
-  vec Abetabar = A*betabar;
-  
 
-  for (int rep=0; rep<R; rep++){   
+  for (int rep=0; rep<R; rep++){    
+    RA = chol(A);
+    W = join_cols(X, RA); //analogous to rbind() in R
+    z = join_cols(y, RA*betabar);
+    // W'W=R'R ;  (W'W)^-1 = IR IR'  -- this is UL decomp
+    IR = solve(trimatu(chol(trans(W)*W)), eye(nvar,nvar)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
+    btilde = (IR*trans(IR)) * (trans(W)*z);
+    res = z-W*btilde;
+    s = as_scalar(trans(res)*res); //converts the matrix to a scalar
     
-    //first draw beta | sigmasq
-    IR = solve(trimatu(chol(XpX/sigmasq+A)), eye(nvar,nvar)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
-    btilde = (IR*trans(IR)) * (Xpy/sigmasq+Abetabar);
-    beta = btilde + IR*vec(rnorm(nvar));
-    
-    //now draw sigmasq | beta
-    s = sum(square(y-X*beta));
+    // first draw Sigma
     sigmasq = (nu*ssq+s) / rchisq(1,nu+nobs)[0]; //rchisq returns a vectorized object, so using [0] allows for the conversion to double
-        
-    if((rep+1)%keep==0){
+  
+    // now draw beta given Sigma
+    beta = btilde + sqrt(sigmasq)*(IR*vec(rnorm(nvar)));
+    
+    
+    if ((rep+1)%keep==0){
       mkeep = (rep+1)/keep;
       betadraw(mkeep-1, span::all) = trans(beta);
       sigmasqdraw[mkeep-1] = sigmasq;
-    }   
+    }    
   }  
   
   

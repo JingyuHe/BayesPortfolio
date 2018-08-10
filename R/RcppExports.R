@@ -17,12 +17,20 @@ rmultireg_IG <- function(Y, X, betabar_all, A, nu, R, keep) {
     .Call(`_BayesPortfolio_rmultireg_IG`, Y, X, betabar_all, A, nu, R, keep)
 }
 
-rmultireg_singlerun <- function(Y, X, Bbar, A, nu, V) {
-    .Call(`_BayesPortfolio_rmultireg_singlerun`, Y, X, Bbar, A, nu, V)
+rmultireg_IGsinglerun <- function(Y, X, Bbar, A, nu, V) {
+    .Call(`_BayesPortfolio_rmultireg_IGsinglerun`, Y, X, Bbar, A, nu, V)
 }
 
-runiregGibbs_rcpp_loop <- function(y, X, betabar, A, nu, ssq, sigmasq, R, keep, nprint) {
-    .Call(`_BayesPortfolio_runiregGibbs_rcpp_loop`, y, X, betabar, A, nu, ssq, sigmasq, R, keep, nprint)
+runireg_singlerun <- function(y, X, betabar, A, nu, ssq) {
+    .Call(`_BayesPortfolio_runireg_singlerun`, y, X, betabar, A, nu, ssq)
+}
+
+runireg <- function(y, X, betabar, A, nu, ssq, R, keep, nprint) {
+    .Call(`_BayesPortfolio_runireg`, y, X, betabar, A, nu, ssq, R, keep, nprint)
+}
+
+runiregGibbs <- function(y, X, betabar, A, nu, ssq, sigmasq, R, keep, nprint) {
+    .Call(`_BayesPortfolio_runiregGibbs`, y, X, betabar, A, nu, ssq, sigmasq, R, keep, nprint)
 }
 
 rmatNorm <- function(M, U, V) {

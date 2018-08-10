@@ -1,7 +1,7 @@
 #include "../inst/include/utility.h"
 
 // [[Rcpp::export]]
-List rmultireg_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V) {
+List rmultireg_IGsinglerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V) {
 
 // Keunwoo Kim 09/09/2014
 
