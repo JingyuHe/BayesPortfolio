@@ -2,7 +2,7 @@
   
 // [[Rcpp::export]]
 List runireg(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, 
-                  int R, int keep, int nprint) {
+                  size_t R, size_t keep, size_t nprint) {
 
 // Keunwoo Kim 09/09/2014
 
@@ -27,19 +27,19 @@ List runireg(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, a
 //  beta ~ N(betabar,sigmasq*A^-1)
 //  sigmasq ~ (nu*ssq)/chisq_nu
 
-  int mkeep;
+  size_t mkeep;
   double s, sigmasq;
   mat RA, W, IR;
   vec z, btilde, res, beta;
   
-  int nvar = X.n_cols;
-  int nobs = y.size();
+  size_t nvar = X.n_cols;
+  size_t nobs = y.size();
   
   vec sigmasqdraw(R/keep);
   mat betadraw(R/keep, nvar);
   
 
-  for (int rep=0; rep<R; rep++){    
+  for (size_t rep=0; rep<R; rep++){    
     RA = chol(A);
     W = join_cols(X, RA); //analogous to rbind() in R
     z = join_cols(y, RA*betabar);

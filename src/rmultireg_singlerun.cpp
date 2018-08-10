@@ -26,9 +26,9 @@ List rmultireg_IGsinglerun(arma::mat const& Y, arma::mat const& X, arma::mat con
 //  beta = vec(B) 
 //  Sigma ~ IW(nu,V) or Sigma^-1 ~ W(nu, V^-1)
 
-  int n = Y.n_rows;
-  int m = Y.n_cols;
-  int k = X.n_cols;
+  size_t n = Y.n_rows;
+  size_t m = Y.n_cols;
+  size_t k = X.n_cols;
   
   //first draw Sigma
   mat RA = chol(A);

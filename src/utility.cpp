@@ -86,15 +86,15 @@ Rcpp::List rwishart_bayesm(double nu, arma::mat const& V){
 // E[WI]=V^-1/(nu-m-1)
   
   // T has sqrt chisqs on diagonal and normals below diagonal
-  int m = V.n_rows;
+  size_t m = V.n_rows;
   arma::mat T = arma::zeros(m,m);
   
-  for(int i = 0; i < m; i++) {
+  for(size_t i = 0; i < m; i++) {
     T(i,i) = sqrt(Rcpp::rchisq(1,nu-i)[0]); //rchisq returns a vectorized object, so using [0] allows for the conversion to double
   }
   
-  for(int j = 0; j < m; j++) {  
-    for(int i = j+1; i < m; i++) {    
+  for(size_t j = 0; j < m; j++) {  
+    for(size_t i = j+1; i < m; i++) {    
       T(i,j) = Rcpp::rnorm(1)[0]; //rnorm returns a NumericVector, so using [0] allows for conversion to double
   }}
   

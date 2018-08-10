@@ -2,7 +2,7 @@
 
 
 // [[Rcpp::export]]
-List rmultireg_IG_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec) {
+void rmultireg_IG_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec) {
 
 double sigmasq = 1.0; // initialize
 
@@ -53,13 +53,13 @@ double sigmasq = 1.0; // initialize
 
 
     double ssq = 1.0;
-    int mkeep;
+    size_t mkeep;
     double s;
     mat RA, W, IR;
     vec z, btilde, beta;
     
-    int nvar = X.n_cols;
-    int nobs = y.size();
+    size_t nvar = X.n_cols;
+    size_t nobs = y.size();
     
     // vec sigmasqdraw(R/keep);
     // mat betadraw(R/keep, nvar);
@@ -70,7 +70,7 @@ double sigmasq = 1.0; // initialize
     vec Abetabar = A*betabar;
     
 
-    // for (int rep=0; rep<R; rep++){   
+    // for (size_t rep=0; rep<R; rep++){   
       
       //first draw beta | sigmasq
       IR = solve(trimatu(chol(XpX/sigmasq+A)), eye(nvar,nvar)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
@@ -94,7 +94,5 @@ double sigmasq = 1.0; // initialize
   }
   
   
-  return List::create(
-      Named("betadraw") = beta_mat, 
-      Named("sigmasqdraw") = sigmasq_vec);
+  return;
 }

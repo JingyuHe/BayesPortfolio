@@ -5,7 +5,7 @@
 
 // [[Rcpp::export]]
 List runiregGibbs(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, 
-                      double sigmasq, int R, int keep, int nprint) {
+                      double sigmasq, size_t R, size_t keep, size_t nprint) {
 
 // Keunwoo Kim 09/09/2014
 
@@ -30,13 +30,13 @@ List runiregGibbs(arma::vec const& y, arma::mat const& X, arma::vec const& betab
 //  beta ~ N(betabar,sigmasq*A^-1)
 //  sigmasq ~ (nu*ssq)/chisq_nu
 // 
-  int mkeep;
+  size_t mkeep;
   double s;
   mat RA, W, IR;
   vec z, btilde, beta;
   
-  int nvar = X.n_cols;
-  int nobs = y.size();
+  size_t nvar = X.n_cols;
+  size_t nobs = y.size();
   
   vec sigmasqdraw(R/keep);
   mat betadraw(R/keep, nvar);
@@ -47,7 +47,7 @@ List runiregGibbs(arma::vec const& y, arma::mat const& X, arma::vec const& betab
   vec Abetabar = A*betabar;
   
 
-  for (int rep=0; rep<R; rep++){   
+  for (size_t rep=0; rep<R; rep++){   
     
     //first draw beta | sigmasq
     IR = solve(trimatu(chol(XpX/sigmasq+A)), eye(nvar,nvar)); //trimatu interprets the matrix as upper triangular and makes solve more efficient

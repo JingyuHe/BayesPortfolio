@@ -1,7 +1,7 @@
 #include "../inst/include/utility.h"
   
 // [[Rcpp::export]]
-List runireg_singlerun(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq) {
+void runireg_singlerun(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, arma::vec& beta, double& sigmasq) {
 
 // Keunwoo Kim 09/09/2014
 
@@ -26,13 +26,13 @@ List runireg_singlerun(arma::vec const& y, arma::mat const& X, arma::vec const& 
 //  beta ~ N(betabar,sigmasq*A^-1)
 //  sigmasq ~ (nu*ssq)/chisq_nu
 
-  int mkeep;
-  double s, sigmasq;
+  size_t mkeep;
+  double s;
   mat RA, W, IR;
-  vec z, btilde, res, beta;
+  vec z, btilde, res;
   
-  int nvar = X.n_cols;
-  int nobs = y.size();
+  size_t nvar = X.n_cols;
+  size_t nobs = y.size();
   
   
 
@@ -54,7 +54,5 @@ List runireg_singlerun(arma::vec const& y, arma::mat const& X, arma::vec const& 
      
   
   
-  return List::create(
-      Named("betadraw") = beta, 
-      Named("sigmasqdraw") = sigmasq);
+  return;
 }
