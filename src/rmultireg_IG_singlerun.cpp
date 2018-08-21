@@ -47,10 +47,12 @@ double sigmasq = 1.0; // initialize
       // assume diagonal covariance matrix, we can run regressions separately
 
     y = Y.col(i);
-    betabar = betabar_all.col(i);
-    sigmasq = sigmasq_vec(i);
-    beta = beta_mat.col(i);
 
+    betabar = betabar_all.col(i);
+
+    sigmasq = sigmasq_vec(i);
+
+    beta = beta_mat.col(i);
 
     double ssq = 1.0;
     size_t mkeep;

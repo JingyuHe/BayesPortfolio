@@ -72,8 +72,7 @@ arma::mat rmatNorm(arma::mat& M, arma::mat& U, arma::mat& V){
 
 
 
-// [[Rcpp::export]]
-Rcpp::List rwishart_bayesm(double nu, arma::mat const& V){
+void rwishart_bayesm(double nu, arma::mat const& V, arma::mat& CI, arma::mat& C){
 
 // Wayne Taylor 4/7/2015
 
@@ -98,8 +97,8 @@ Rcpp::List rwishart_bayesm(double nu, arma::mat const& V){
       T(i,j) = Rcpp::rnorm(1)[0]; //rnorm returns a NumericVector, so using [0] allows for conversion to double
   }}
   
-  arma::mat C = trans(T)*arma::chol(V);
-  arma::mat CI = solve(trimatu(C),arma::eye(m,m)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
+  C = trans(T)*arma::chol(V);
+  CI = solve(trimatu(C),arma::eye(m,m)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
   
   // C is the upper triangular root of Wishart therefore, W=C'C
   // this is the LU decomposition Inv(W) = CICI' Note: this is
@@ -107,10 +106,11 @@ Rcpp::List rwishart_bayesm(double nu, arma::mat const& V){
   
   // W is Wishart draw, IW is W^-1
   
-  return Rcpp::List::create(
-    Rcpp::Named("W") = trans(C) * C,
-    Rcpp::Named("IW") = CI * trans(CI),
-    Rcpp::Named("C") = C,
-    Rcpp::Named("CI") = CI);
+  // return Rcpp::List::create(
+    // Rcpp::Named("W") = trans(C) * C,
+    // Rcpp::Named("IW") = CI * trans(CI),
+    // Rcpp::Named("C") = C,
+    // Rcpp::Named("CI") = CI);
+  return;
 }
 

@@ -83,11 +83,10 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rmultireg_IGsinglerun
-List rmultireg_IGsinglerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V);
-RcppExport SEXP _BayesPortfolio_rmultireg_IGsinglerun(SEXP YSEXP, SEXP XSEXP, SEXP BbarSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP VSEXP) {
+// rmultireg_IW_singlerun
+void rmultireg_IW_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V, arma::mat& B, arma::mat& Sigma);
+RcppExport SEXP _BayesPortfolio_rmultireg_IW_singlerun(SEXP YSEXP, SEXP XSEXP, SEXP BbarSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP VSEXP, SEXP BSEXP, SEXP SigmaSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat const& >::type Y(YSEXP);
     Rcpp::traits::input_parameter< arma::mat const& >::type X(XSEXP);
@@ -95,8 +94,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat const& >::type A(ASEXP);
     Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
     Rcpp::traits::input_parameter< arma::mat const& >::type V(VSEXP);
-    rcpp_result_gen = Rcpp::wrap(rmultireg_IGsinglerun(Y, X, Bbar, A, nu, V));
-    return rcpp_result_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type B(BSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type Sigma(SigmaSEXP);
+    rmultireg_IW_singlerun(Y, X, Bbar, A, nu, V, B, Sigma);
+    return R_NilValue;
 END_RCPP
 }
 // runireg_singlerun
@@ -156,17 +157,31 @@ BEGIN_RCPP
 END_RCPP
 }
 // sampler1
-Rcpp::List sampler1(arma::mat& Y, arma::mat& X, arma::mat Z, size_t nsamps, size_t burnin);
-RcppExport SEXP _BayesPortfolio_sampler1(SEXP YSEXP, SEXP XSEXP, SEXP ZSEXP, SEXP nsampsSEXP, SEXP burninSEXP) {
+Rcpp::List sampler1(arma::mat& R, arma::mat& F, size_t nsamps, size_t burnin);
+RcppExport SEXP _BayesPortfolio_sampler1(SEXP RSEXP, SEXP FSEXP, SEXP nsampsSEXP, SEXP burninSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type F(FSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nsamps(nsampsSEXP);
+    Rcpp::traits::input_parameter< size_t >::type burnin(burninSEXP);
+    rcpp_result_gen = Rcpp::wrap(sampler1(R, F, nsamps, burnin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sampler2
+Rcpp::List sampler2(arma::mat& R, arma::mat& F, arma::mat Z, size_t nsamps, size_t burnin);
+RcppExport SEXP _BayesPortfolio_sampler2(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP nsampsSEXP, SEXP burninSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type F(FSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
     Rcpp::traits::input_parameter< size_t >::type nsamps(nsampsSEXP);
     Rcpp::traits::input_parameter< size_t >::type burnin(burninSEXP);
-    rcpp_result_gen = Rcpp::wrap(sampler1(Y, X, Z, nsamps, burnin));
+    rcpp_result_gen = Rcpp::wrap(sampler2(R, F, Z, nsamps, burnin));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -183,31 +198,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rwishart_bayesm
-Rcpp::List rwishart_bayesm(double nu, arma::mat const& V);
-RcppExport SEXP _BayesPortfolio_rwishart_bayesm(SEXP nuSEXP, SEXP VSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type V(VSEXP);
-    rcpp_result_gen = Rcpp::wrap(rwishart_bayesm(nu, V));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 12},
     {"_BayesPortfolio_gibbs", (DL_FUNC) &_BayesPortfolio_gibbs, 12},
     {"_BayesPortfolio_rmultireg_IG_singlerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun, 7},
     {"_BayesPortfolio_rmultireg_IG", (DL_FUNC) &_BayesPortfolio_rmultireg_IG, 7},
-    {"_BayesPortfolio_rmultireg_IGsinglerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IGsinglerun, 6},
+    {"_BayesPortfolio_rmultireg_IW_singlerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IW_singlerun, 8},
     {"_BayesPortfolio_runireg_singlerun", (DL_FUNC) &_BayesPortfolio_runireg_singlerun, 8},
     {"_BayesPortfolio_runireg", (DL_FUNC) &_BayesPortfolio_runireg, 9},
     {"_BayesPortfolio_runiregGibbs", (DL_FUNC) &_BayesPortfolio_runiregGibbs, 10},
-    {"_BayesPortfolio_sampler1", (DL_FUNC) &_BayesPortfolio_sampler1, 5},
+    {"_BayesPortfolio_sampler1", (DL_FUNC) &_BayesPortfolio_sampler1, 4},
+    {"_BayesPortfolio_sampler2", (DL_FUNC) &_BayesPortfolio_sampler2, 5},
     {"_BayesPortfolio_rmatNorm", (DL_FUNC) &_BayesPortfolio_rmatNorm, 3},
-    {"_BayesPortfolio_rwishart_bayesm", (DL_FUNC) &_BayesPortfolio_rwishart_bayesm, 2},
     {NULL, NULL, 0}
 };
 
