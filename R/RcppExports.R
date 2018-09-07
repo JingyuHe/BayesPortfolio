@@ -9,6 +9,10 @@ gibbs <- function(R, F, X, Xi, Z, T, N, K, M, nsamp, burnin, tau) {
     .Call(`_BayesPortfolio_gibbs`, R, F, X, Xi, Z, T, N, K, M, nsamp, burnin, tau)
 }
 
+rmultireg_IG_singlerun_alone <- function(Y, X, betabar_all, A, nu) {
+    .Call(`_BayesPortfolio_rmultireg_IG_singlerun_alone`, Y, X, betabar_all, A, nu)
+}
+
 rmultireg_IG_singlerun <- function(Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec) {
     invisible(.Call(`_BayesPortfolio_rmultireg_IG_singlerun`, Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec))
 }
@@ -21,12 +25,12 @@ rmultireg_IW_singlerun <- function(Y, X, Bbar, A, nu, V, B, Sigma) {
     invisible(.Call(`_BayesPortfolio_rmultireg_IW_singlerun`, Y, X, Bbar, A, nu, V, B, Sigma))
 }
 
-runireg_singlerun <- function(y, X, betabar, A, nu, ssq, beta, sigmasq) {
-    invisible(.Call(`_BayesPortfolio_runireg_singlerun`, y, X, betabar, A, nu, ssq, beta, sigmasq))
+runireg_BP <- function(y, X, betabar, A, nu, ssq, R, keep, nprint) {
+    .Call(`_BayesPortfolio_runireg_BP`, y, X, betabar, A, nu, ssq, R, keep, nprint)
 }
 
-runireg <- function(y, X, betabar, A, nu, ssq, R, keep, nprint) {
-    .Call(`_BayesPortfolio_runireg`, y, X, betabar, A, nu, ssq, R, keep, nprint)
+runireg_singlerun <- function(y, X, betabar, A, nu, ssq, beta, sigmasq) {
+    invisible(.Call(`_BayesPortfolio_runireg_singlerun`, y, X, betabar, A, nu, ssq, beta, sigmasq))
 }
 
 runiregGibbs <- function(y, X, betabar, A, nu, ssq, sigmasq, R, keep, nprint) {

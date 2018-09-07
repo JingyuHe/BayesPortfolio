@@ -50,6 +50,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rmultireg_IG_singlerun_alone
+List rmultireg_IG_singlerun_alone(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu);
+RcppExport SEXP _BayesPortfolio_rmultireg_IG_singlerun_alone(SEXP YSEXP, SEXP XSEXP, SEXP betabar_allSEXP, SEXP ASEXP, SEXP nuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type betabar_all(betabar_allSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    rcpp_result_gen = Rcpp::wrap(rmultireg_IG_singlerun_alone(Y, X, betabar_all, A, nu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rmultireg_IG_singlerun
 void rmultireg_IG_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec);
 RcppExport SEXP _BayesPortfolio_rmultireg_IG_singlerun(SEXP YSEXP, SEXP XSEXP, SEXP betabar_allSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP beta_matSEXP, SEXP sigmasq_vecSEXP) {
@@ -100,6 +115,25 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// runireg_BP
+List runireg_BP(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, size_t R, size_t keep, size_t nprint);
+RcppExport SEXP _BayesPortfolio_runireg_BP(SEXP ySEXP, SEXP XSEXP, SEXP betabarSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP ssqSEXP, SEXP RSEXP, SEXP keepSEXP, SEXP nprintSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec const& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec const& >::type betabar(betabarSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< double >::type ssq(ssqSEXP);
+    Rcpp::traits::input_parameter< size_t >::type R(RSEXP);
+    Rcpp::traits::input_parameter< size_t >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nprint(nprintSEXP);
+    rcpp_result_gen = Rcpp::wrap(runireg_BP(y, X, betabar, A, nu, ssq, R, keep, nprint));
+    return rcpp_result_gen;
+END_RCPP
+}
 // runireg_singlerun
 void runireg_singlerun(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, arma::vec& beta, double& sigmasq);
 RcppExport SEXP _BayesPortfolio_runireg_singlerun(SEXP ySEXP, SEXP XSEXP, SEXP betabarSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP ssqSEXP, SEXP betaSEXP, SEXP sigmasqSEXP) {
@@ -115,25 +149,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double& >::type sigmasq(sigmasqSEXP);
     runireg_singlerun(y, X, betabar, A, nu, ssq, beta, sigmasq);
     return R_NilValue;
-END_RCPP
-}
-// runireg
-List runireg(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, size_t R, size_t keep, size_t nprint);
-RcppExport SEXP _BayesPortfolio_runireg(SEXP ySEXP, SEXP XSEXP, SEXP betabarSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP ssqSEXP, SEXP RSEXP, SEXP keepSEXP, SEXP nprintSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec const& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec const& >::type betabar(betabarSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type A(ASEXP);
-    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< double >::type ssq(ssqSEXP);
-    Rcpp::traits::input_parameter< size_t >::type R(RSEXP);
-    Rcpp::traits::input_parameter< size_t >::type keep(keepSEXP);
-    Rcpp::traits::input_parameter< size_t >::type nprint(nprintSEXP);
-    rcpp_result_gen = Rcpp::wrap(runireg(y, X, betabar, A, nu, ssq, R, keep, nprint));
-    return rcpp_result_gen;
 END_RCPP
 }
 // runiregGibbs
@@ -202,11 +217,12 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 12},
     {"_BayesPortfolio_gibbs", (DL_FUNC) &_BayesPortfolio_gibbs, 12},
+    {"_BayesPortfolio_rmultireg_IG_singlerun_alone", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun_alone, 5},
     {"_BayesPortfolio_rmultireg_IG_singlerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun, 7},
     {"_BayesPortfolio_rmultireg_IG", (DL_FUNC) &_BayesPortfolio_rmultireg_IG, 7},
     {"_BayesPortfolio_rmultireg_IW_singlerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IW_singlerun, 8},
+    {"_BayesPortfolio_runireg_BP", (DL_FUNC) &_BayesPortfolio_runireg_BP, 9},
     {"_BayesPortfolio_runireg_singlerun", (DL_FUNC) &_BayesPortfolio_runireg_singlerun, 8},
-    {"_BayesPortfolio_runireg", (DL_FUNC) &_BayesPortfolio_runireg, 9},
     {"_BayesPortfolio_runiregGibbs", (DL_FUNC) &_BayesPortfolio_runiregGibbs, 10},
     {"_BayesPortfolio_sampler1", (DL_FUNC) &_BayesPortfolio_sampler1, 4},
     {"_BayesPortfolio_sampler2", (DL_FUNC) &_BayesPortfolio_sampler2, 5},
