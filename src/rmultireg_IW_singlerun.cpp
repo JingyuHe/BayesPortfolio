@@ -31,15 +31,15 @@ void rmultireg_IW_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat co
   size_t k = X.n_cols;
   
   //first draw Sigma
-  mat RA = chol(A);
-  mat W = join_cols(X, RA); //analogous to rbind() in R
-  mat Z = join_cols(Y, RA*Bbar);
+  // mat RA = chol(A);
+  // mat W = join_cols(X, RA); //analogous to rbind() in R
+  // mat Z = join_cols(Y, RA*Bbar);
   // note:  Y,X,A,Bbar must be matrices!
-  mat IR = solve(trimatu(chol(trans(W)*W)), eye(k,k)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
+  mat IR = solve(trimatu(chol(trans(X)*X)), eye(k,k)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
   // W'W = R'R  &  (W'W)^-1 = IRIR'  -- this is the UL decomp!
-  mat Btilde = (IR*trans(IR)) * (trans(W)*Z);
+  mat Btilde = (IR*trans(IR)) * (trans(X)*Y);
   // IRIR'(W'Z) = (X'X+A)^-1(X'Y + ABbar)
-  mat E = Z-W*Btilde;
+  mat E = Y-X*Btilde;
   mat S = trans(E)*E;
   // E'E
   
@@ -52,45 +52,11 @@ void rmultireg_IW_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat co
 
   rwishart_bayesm(nu+n, VSinv, CI, C);
   
-//   mat CI2 = zeros<mat>(m, m);
-//   vec residual_variance(m);
-//   for(size_t i = 0; i < m; i ++ ){
-//       // sample each variables
-//       residual_variance[i] = 1.0 / rgamma(1, nu + n, (nu + n) / (nu * V(i, i) + n * S(i, i)))[0];
-//   }
 
-//   CI2.diag() = residual_variance;
-
-  // rwout contains
-  // W: Wishart draw
-  // IW: Inverse Wishart draw
-  // C: W = CC^{T}
-  // CI: W^{-1} = CICI^{T}
-
-
-
-  
-  // now draw B given Sigma
-  //   note beta ~ N(vec(Btilde),Sigma (x) Covxxa)
-  //       Cov=(X'X + A)^-1  = IR t(IR)  
-  //       Sigma=CICI'    
-  //       therefore, cov(beta)= Omega = CICI' (x) IR IR' = (CI (x) IR) (CI (x) IR)'
-  //  so to draw beta we do beta= vec(Btilde) +(CI (x) IR)vec(Z_mk)  
-  //  		Z_mk is m x k matrix of N(0,1)
-  //	since vec(ABC) = (C' (x) A)vec(B), we have 
-  //		B = Btilde + IR Z_mk CI'
-
-
-  // mat CI = rwout["CI"]; //there is no need to use as<mat>(rwout["CI"]) since CI is being initiated as a mat in the same line
   mat draw = mat(rnorm(k*m));
   draw.reshape(k,m);
   B = Btilde + IR*draw*trans(CI);
   Sigma = CI * trans(CI);
 
-  // return List::create(
-      // Named("B") = B, 
-      // Named("Sigma") = rwout["IW"]
-    //   Named("Sigma2") = CI2 * CI2.t()
-  // );
   return;
 }

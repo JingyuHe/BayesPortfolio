@@ -69,15 +69,35 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
 
     // other intermediate variables
     arma::mat Sigma_zz_condition(M, M);
-    arma::mat Sigma_v;
+    arma::mat Sigma_v(M, M);
     arma::mat Sigma_vu_Sigma_u_inv;
     arma::mat Sigma_ve_Psi_inv;
     arma::mat Sigma_vu;
     arma::mat Sigma_ve;
+    arma::mat Sigma_z;
+
+    // compute weights
+    arma::mat mu_assets;
+    arma::mat cov_assets;
+    arma::mat A;
+    arma::mat B;
+    arma::mat alpha;
+    arma::mat beta;
+    arma::mat theta;
+    arma::mat gamma;
 
 
     // initialize outputs
-
+    arma::mat Gamma_R_output(nsamps, Gamma_R.n_elem);
+    arma::mat Psi_output(nsamps, Psi.n_elem);
+    arma::mat Omega_F_output(nsamps, Omega_F.n_elem);
+    arma::mat Sigma_u_output(nsamps, Sigma_u.n_elem);
+    arma::mat Delta_output(nsamps, Delta.n_elem);
+    arma::mat Sigma_zz_condition_output(nsamps, Sigma_zz_condition.n_elem);
+    arma::mat Sigma_v_output(nsamps, Sigma_v.n_elem);
+    arma::mat mu_output(nsamps, N);
+    arma::mat cov_output(nsamps, pow(N, 2));
+    arma::mat Sigma_z_output(nsamps, pow(M, 2));
 
     
     for(size_t i = 0; i < nsamps; i ++ ){
@@ -104,6 +124,7 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
         rmultireg_IW_singlerun(Z, W_Z, A_z_prior_mean, A_z_prior_cov, nu, V_Z, Delta, Sigma_zz_condition);
 
 
+
         // recover unconditonal covariance matrix
         // Delta has 1 + M + K + N columns
         // 0 ~ M are Omega_z
@@ -117,34 +138,48 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
         Sigma_v = Sigma_zz_condition + Sigma_ve_Psi_inv * trans(Sigma_ve) + Sigma_vu_Sigma_u_inv * trans(Sigma_vu);
 
 
-        // if(i > burnin - 1){
-        //     results.slice(i - burnin) = r_all_coef;
-        // }
+        // compute weights
+        A = trans(Delta.row(0));
+        B = trans(Delta.rows(1, M));
+        alpha = trans(Gamma_R.row(0));
+        beta = trans(Gamma_R.rows(1, K));
+        theta = trans(Omega_F.row(0));
+        gamma = trans(Omega_F.rows(1, M));
 
-    // }
+        mu_assets = alpha + beta * (theta + gamma * (inv(B + eye(B.n_cols, B.n_cols)) * A));
 
-    // arma::cube alpha(X.n_rows, 1, nsamp);
-    // arma::cube beta0(K, 1, nsamp);
-    // arma::cube beta1(Xi.n_rows, 1, nsamp);
-    // arma::mat temp;
-    // arma::mat temp2;
-    // for(size_t j = 0; j < nsamp; j ++ ){
-    //     temp = results.slice(j);
-    //     temp2 = temp.col(74);
-    //     alpha.slice(j) = X * temp.rows(0, M);
-    //     // alpha.slice(j) = X * results.subcube(0, 0, j, M, 0, j).slice(j);
+        Sigma_z = inv(eye(pow(M,2), pow(M,2)) - kron(B, B)) * vectorise(Sigma_v);
+        Sigma_z.reshape(M, M);
 
-    //     beta0.slice(j) = results.subcube(1 + M, 0, j, M + K, 0, j);
+        cov_assets = beta * (gamma * Sigma_z * trans(gamma)) * trans(beta);
 
-    //     beta1.slice(j) = Xi * temp2.rows(M + K + 1, 1 + 2 * M + K * (M + 1) - M - 1);
-        
-    // }
+        // cout << mu_assets << endl;
 
-    // arma::mat beta0
+        // save samples
+        cov_output.row(i) = trans(vectorise(cov_assets));
+        Sigma_z_output.row(i) = trans(vectorise(Sigma_z));
+        mu_output.row(i) = trans(mu_assets);
+        Gamma_R_output.row(i) = trans(vectorise(Gamma_R));
+        Psi_output.row(i) = trans(Psi);
+        Omega_F_output.row(i) = trans(vectorise(Omega_F));
+        Sigma_u_output.row(i) = trans(vectorise(Sigma_u));
+        Delta_output.row(i) = trans(vectorise(Delta));
+        Sigma_zz_condition_output.row(i) = trans(vectorise(Sigma_zz_condition));
+        Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
+
+    }
 
     return Rcpp::List::create(
-        Named("H") = H,
-        Named("Gamma_R") = Gamma_R
+        Named("Gamma_R") = Gamma_R_output,
+        Named("Psi") = Psi_output,
+        Named("Omega_F") = Omega_F_output,
+        Named("Sigma_u") = Sigma_u_output,
+        Named("Delta") = Delta_output,
+        Named("Sigma_zz_condition") = Sigma_zz_condition_output,
+        Named("Sigma_v") = Sigma_v_output,
+        Named("mu_assets") = mu_output,
+        Named("cov_assets") = cov_output,
+        Named("Sigma_z") = Sigma_z_output
     );
 }
 
