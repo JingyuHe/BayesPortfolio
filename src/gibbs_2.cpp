@@ -16,7 +16,7 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t nsamps){
+Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps){
 
     // X is one period lagged Z
 
@@ -79,12 +79,14 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
     // compute weights
     arma::mat mu_assets;
     arma::mat cov_assets;
+    arma::mat cov_assets_inv;
     arma::mat A;
     arma::mat B;
     arma::mat alpha;
     arma::mat beta;
     arma::mat theta;
     arma::mat gamma;
+    arma::mat weight;
 
 
     // initialize outputs
@@ -98,6 +100,7 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
     arma::mat mu_output(nsamps, N);
     arma::mat cov_output(nsamps, pow(N, 2));
     arma::mat Sigma_z_output(nsamps, pow(M, 2));
+    arma::mat weight_output(nsamps, N);
 
     
     for(size_t i = 0; i < nsamps; i ++ ){
@@ -153,6 +156,10 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
 
         cov_assets = beta * (gamma * Sigma_z * trans(gamma)) * trans(beta);
 
+        cov_assets_inv = inv(cov_assets);
+
+        weight = (1.0 / risk - r_f) * cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets);
+
         // cout << mu_assets << endl;
 
         // save samples
@@ -179,7 +186,8 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
         Named("Sigma_v") = Sigma_v_output,
         Named("mu_assets") = mu_output,
         Named("cov_assets") = cov_output,
-        Named("Sigma_z") = Sigma_z_output
+        Named("Sigma_z") = Sigma_z_output,
+        Named("weights") = weight_output
     );
 }
 
