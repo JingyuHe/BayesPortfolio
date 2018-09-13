@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // gibbs_2
-arma::mat gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t T, size_t N, size_t K, size_t M, size_t nsamp, size_t burnin, double tau);
-RcppExport SEXP _BayesPortfolio_gibbs_2(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP, SEXP TSEXP, SEXP NSEXP, SEXP KSEXP, SEXP MSEXP, SEXP nsampSEXP, SEXP burninSEXP, SEXP tauSEXP) {
+Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t nsamp, size_t burnin);
+RcppExport SEXP _BayesPortfolio_gibbs_2(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP, SEXP nsampSEXP, SEXP burninSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,14 +16,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type F(FSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< size_t >::type T(TSEXP);
-    Rcpp::traits::input_parameter< size_t >::type N(NSEXP);
-    Rcpp::traits::input_parameter< size_t >::type K(KSEXP);
-    Rcpp::traits::input_parameter< size_t >::type M(MSEXP);
     Rcpp::traits::input_parameter< size_t >::type nsamp(nsampSEXP);
     Rcpp::traits::input_parameter< size_t >::type burnin(burninSEXP);
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    rcpp_result_gen = Rcpp::wrap(gibbs_2(R, F, Z, X, T, N, K, M, nsamp, burnin, tau));
+    rcpp_result_gen = Rcpp::wrap(gibbs_2(R, F, Z, X, nsamp, burnin));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -217,7 +212,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 11},
+    {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 6},
     {"_BayesPortfolio_gibbs", (DL_FUNC) &_BayesPortfolio_gibbs, 12},
     {"_BayesPortfolio_rmultireg_IG_singlerun_alone", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun_alone, 5},
     {"_BayesPortfolio_rmultireg_IG_singlerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun, 7},
