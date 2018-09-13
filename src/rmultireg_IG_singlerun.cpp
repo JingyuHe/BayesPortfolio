@@ -33,7 +33,7 @@ double sigmasq = 1.0; // initialize
   arma::vec y;
 
   size_t n = Y.n_rows;
-  size_t m = Y.n_cols;
+  size_t m = Y.n_cols; // number of response
   size_t k = X.n_cols;
 
 //   arma::cube betaoutput(R/keep, k, m);

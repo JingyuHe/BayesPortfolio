@@ -16,7 +16,16 @@
 // available from R
 //
 // [[Rcpp::export]]
-arma::mat gibbs_2(arma::mat R, arma::mat F, arma::mat X, arma::mat Xi, arma::mat Z, size_t T, size_t N, size_t K, size_t M, size_t nsamp, size_t burnin, double tau){
+arma::mat gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t T, size_t N, size_t K, size_t M, size_t nsamp, size_t burnin, double tau){
+
+    // X is one period lagged Z
+
+    // R: T * N returns
+    // F: T * K factors
+    // Z: T * M other variables
+    // X: T * M, one period lagged Z
+
+    arma::mat Xi;
 
     arma::cube results(1 + 2 * M + K * (M + 1), N, nsamp);
 
@@ -61,40 +70,12 @@ arma::mat gibbs_2(arma::mat R, arma::mat F, arma::mat X, arma::mat Xi, arma::mat
     arma::mat Bf_z;
 
     for(size_t i = 0; i < nsamp + burnin; i ++ ){
-        // sigma_ff = 
-        sigma_ff = riwishart(T - 2 * M + N - 1, F.t() * Hat_X * F);
 
-        A_f = rmatNorm(A_hat, XXinv, sigma_ff);
+        // first regression
+        // for each i, regress r_i on factors F
+        
 
-        Res_f = F - X * A_f;
 
-        W2 = arma::join_rows(X, Res_f);
-
-        sigma_zz = riwishart(T - N - M - 1, Z.t() * hat_matrix(W2) * Z);
-
-        W2W2inv = inv(W2.t() * W2);
-
-        gamma_hat = W2W2inv * W2.t() * Z;
-
-        z_all_coef = rmatNorm(gamma_hat, W2W2inv, sigma_zz);
-
-        Bf_z = z_all_coef.rows(M + 1, M + K); 
-
-        A_z = z_all_coef.rows(0, M);
-
-        Res_z = Z - X * A_z;
-
-        V_z = Res_z - Res_f * Bf_z;
-
-        W1 = arma::join_rows(arma::join_rows(arma::join_rows(X, F), Xi), V_z);
-
-        W1W1inv = inv(W1.t() * W1);
-
-        phi_hat = W1W1inv * R;
-
-        sigma_nn = riwishart(T - M * (K + 1) - 1, R.t() * hat_matrix(W1) * R);
-
-        r_all_coef = rmatNorm(phi_hat, W1W1inv, sigma_nn);
 
         if(i > burnin - 1){
             results.slice(i - burnin) = r_all_coef;
