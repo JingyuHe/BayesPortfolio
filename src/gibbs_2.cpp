@@ -16,7 +16,7 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t nsamp, size_t burnin){
+Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t nsamps){
 
     // X is one period lagged Z
 
@@ -74,24 +74,18 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
     arma::mat Sigma_ve_Psi_inv;
     arma::mat Sigma_vu;
     arma::mat Sigma_ve;
-// cout << "ie " << endl;
 
-// cout << H.n_cols << endl;
-    // return/
-    // arma::mat results(1, 1);
 
-    // for(size_t i = 0; i < nsamp + burnin; i ++ ){
+    // initialize outputs
+
+
+    
+    for(size_t i = 0; i < nsamps; i ++ ){
 
         // first regression
         // for each i, regress r_i on factors F
 
         rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_cov, nu, Gamma_R, Psi);
-
-    // cout << Gamma_R << endl;
-
-    // cout << "--------- " << endl;
-
-    //     cout << H * Gamma_R << endl;
 
         // second regression
         // regress F on X
@@ -99,7 +93,6 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
         rmultireg_IW_singlerun(F, X, A_f_prior_mean, A_f_prior_cov, nu, V_F, Omega_F, Sigma_u);
 
 
-        // cout << H.n_cols << " " << Gamma_R.n_cols << " " << Gamma_R.n_rows << endl;
         // compute residuals of first two regressions
         res_R = R - H * Gamma_R;
         res_F = F - X * Omega_F;
@@ -107,34 +100,11 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
         // create regressors for the third regression
         W_Z = join_rows(join_rows(X, res_R), res_F);
 
-
-        // cout << Z.n_cols << " " << Z.n_rows << endl;
-        //         cout << W_Z.n_cols << " " << W_Z.n_rows << endl;
-        // cout << A_z_prior_mean.n_cols << " " << A_z_prior_mean.n_rows << endl;
-        // cout << A_z_prior_cov.n_cols << " " << A_z_prior_cov.n_rows << endl;
-        // cout << V_Z.n_cols << " " << V_Z.n_rows << endl;
-        // cout << Delta.n_cols << " " << Delta.n_rows << endl;
-        // cout << Sigma_zz_condition.n_cols << " " << Sigma_zz_condition.n_rows << endl;
-        // cout << inv(trans(W_Z) * W_Z) << endl;
-        // cout<< res_F << endl;
-
-
-
         // third regression
         rmultireg_IW_singlerun(Z, W_Z, A_z_prior_mean, A_z_prior_cov, nu, V_Z, Delta, Sigma_zz_condition);
 
 
-        // cout << "ok" << endl;
-        // cout << Delta << endl;
-
-        // cout << Delta.n_cols << endl;
-
-        // cout << M << " " << K << " " << N << endl;
-
-        // recover correct unconditional covariance of Z residual
-        // sigma_zz_mat = ();
-    // cout << "ok " << endl;
-
+        // recover unconditonal covariance matrix
         // Delta has 1 + M + K + N columns
         // 0 ~ M are Omega_z
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
@@ -143,9 +113,9 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, size_t ns
         Sigma_ve_Psi_inv = trans(Delta.rows(M + K + 1, M + K + N));
 
         Sigma_vu = Sigma_vu_Sigma_u_inv * Sigma_u;
-        Sigma_ve = Sigma_ve_Psi_inv * Psi;
-
+        Sigma_ve = Sigma_ve_Psi_inv * diagmat(Psi);
         Sigma_v = Sigma_zz_condition + Sigma_ve_Psi_inv * trans(Sigma_ve) + Sigma_vu_Sigma_u_inv * trans(Sigma_vu);
+
 
         // if(i > burnin - 1){
         //     results.slice(i - burnin) = r_all_coef;
