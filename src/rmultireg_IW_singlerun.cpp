@@ -29,28 +29,31 @@ void rmultireg_IW_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat co
   size_t n = Y.n_rows;
   size_t m = Y.n_cols;
   size_t k = X.n_cols;
-  
-  //first draw Sigma
-  // mat RA = chol(A);
-  // mat W = join_cols(X, RA); //analogous to rbind() in R
-  // mat Z = join_cols(Y, RA*Bbar);
-  // note:  Y,X,A,Bbar must be matrices!
-  mat IR = solve(trimatu(chol(trans(X)*X)), eye(k,k)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
-  // W'W = R'R  &  (W'W)^-1 = IRIR'  -- this is the UL decomp!
-  mat Btilde = (IR*trans(IR)) * (trans(X)*Y);
-  // IRIR'(W'Z) = (X'X+A)^-1(X'Y + ABbar)
-  mat E = Y-X*Btilde;
+
+  // mat IR = solve(trimatu(chol(trans(X)*X)), eye(k,k));
+  // mat Btilde = (IR*trans(IR)) * (trans(X)*Y);
+  // mat E = Y-X*Btilde;
+  // mat S = trans(E)*E;
+  // mat ucholinv = solve(trimatu(chol(S)), eye(m,m));
+  // mat VSinv = ucholinv*trans(ucholinv);
+  // mat CI;
+  // mat C;
+  // rwishart_bayesm(nu+n, VSinv, CI, C);
+
+
+  mat RA = chol(A);
+  mat W = join_cols(X, RA);
+  mat Z = join_cols(Y, RA * Bbar);
+  mat IR = solve(trimatu(chol(trans(W) * W)), eye(k, k));
+  mat Btilde = (IR*trans(IR)) * (trans(W)*Z);
+  mat E = Z-W*Btilde;
   mat S = trans(E)*E;
-  // E'E
-  
-  // compute the inverse of V+S
   mat ucholinv = solve(trimatu(chol(V+S)), eye(m,m));
   mat VSinv = ucholinv*trans(ucholinv);
-  
   mat CI;
   mat C;
-
   rwishart_bayesm(nu+n, VSinv, CI, C);
+
   
 
   mat draw = mat(rnorm(k*m));
