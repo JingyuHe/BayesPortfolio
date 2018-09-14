@@ -179,7 +179,7 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double ri
         Delta_output.row(i) = trans(vectorise(Delta));
         Sigma_zz_condition_output.row(i) = trans(vectorise(Sigma_zz_condition));
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
-        weight_output.row(i) = weight;
+        weight_output.row(i) = trans(weight);
 
     }
 
