@@ -154,12 +154,18 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double ri
         Sigma_z = inv(eye(pow(M,2), pow(M,2)) - kron(B, B)) * vectorise(Sigma_v);
         Sigma_z.reshape(M, M);
 
-        cov_assets = beta * (gamma * Sigma_z * trans(gamma)) * trans(beta);
+        cov_assets = beta * (gamma * Sigma_z * trans(gamma)) * trans(beta) + diagmat(Psi);
 
         cov_assets_inv = inv(cov_assets);
 
+
+
+        // cout << cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets) << endl;
+
+        cout << (1.0 / risk - r_f)  << endl;
         weight = (1.0 / risk - r_f) * cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets);
 
+    // cout << weight << endl;
         // cout << mu_assets << endl;
 
         // save samples
@@ -173,6 +179,7 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double ri
         Delta_output.row(i) = trans(vectorise(Delta));
         Sigma_zz_condition_output.row(i) = trans(vectorise(Sigma_zz_condition));
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
+        weight_output.row(i) = weight;
 
     }
 
