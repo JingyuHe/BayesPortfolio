@@ -45,6 +45,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// log_posterior
+Rcpp::List log_posterior(arma::mat R, arma::mat F, arma::mat Z, arma::mat X);
+RcppExport SEXP _BayesPortfolio_log_posterior(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type F(FSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(log_posterior(R, F, Z, X));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rmultireg_IG_singlerun_alone
 List rmultireg_IG_singlerun_alone(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu);
 RcppExport SEXP _BayesPortfolio_rmultireg_IG_singlerun_alone(SEXP YSEXP, SEXP XSEXP, SEXP betabar_allSEXP, SEXP ASEXP, SEXP nuSEXP) {
@@ -211,10 +225,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Mahalanobis
+arma::vec Mahalanobis(arma::mat x, arma::rowvec center, arma::mat cov);
+RcppExport SEXP _BayesPortfolio_Mahalanobis(SEXP xSEXP, SEXP centerSEXP, SEXP covSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type center(centerSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type cov(covSEXP);
+    rcpp_result_gen = Rcpp::wrap(Mahalanobis(x, center, cov));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dmvnorm_arma
+arma::vec dmvnorm_arma(arma::mat x, arma::rowvec mean, arma::mat sigma, bool log);
+RcppExport SEXP _BayesPortfolio_dmvnorm_arma(SEXP xSEXP, SEXP meanSEXP, SEXP sigmaSEXP, SEXP logSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< bool >::type log(logSEXP);
+    rcpp_result_gen = Rcpp::wrap(dmvnorm_arma(x, mean, sigma, log));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 7},
     {"_BayesPortfolio_gibbs", (DL_FUNC) &_BayesPortfolio_gibbs, 12},
+    {"_BayesPortfolio_log_posterior", (DL_FUNC) &_BayesPortfolio_log_posterior, 4},
     {"_BayesPortfolio_rmultireg_IG_singlerun_alone", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun_alone, 5},
     {"_BayesPortfolio_rmultireg_IG_singlerun", (DL_FUNC) &_BayesPortfolio_rmultireg_IG_singlerun, 7},
     {"_BayesPortfolio_rmultireg_IG", (DL_FUNC) &_BayesPortfolio_rmultireg_IG, 7},
@@ -225,6 +267,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BayesPortfolio_sampler1", (DL_FUNC) &_BayesPortfolio_sampler1, 4},
     {"_BayesPortfolio_sampler2", (DL_FUNC) &_BayesPortfolio_sampler2, 8},
     {"_BayesPortfolio_rmatNorm", (DL_FUNC) &_BayesPortfolio_rmatNorm, 3},
+    {"_BayesPortfolio_Mahalanobis", (DL_FUNC) &_BayesPortfolio_Mahalanobis, 3},
+    {"_BayesPortfolio_dmvnorm_arma", (DL_FUNC) &_BayesPortfolio_dmvnorm_arma, 4},
     {NULL, NULL, 0}
 };
 

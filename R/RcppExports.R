@@ -9,6 +9,10 @@ gibbs <- function(R, F, X, Xi, Z, T, N, K, M, nsamp, burnin, tau) {
     .Call(`_BayesPortfolio_gibbs`, R, F, X, Xi, Z, T, N, K, M, nsamp, burnin, tau)
 }
 
+log_posterior <- function(R, F, Z, X) {
+    .Call(`_BayesPortfolio_log_posterior`, R, F, Z, X)
+}
+
 rmultireg_IG_singlerun_alone <- function(Y, X, betabar_all, A, nu) {
     .Call(`_BayesPortfolio_rmultireg_IG_singlerun_alone`, Y, X, betabar_all, A, nu)
 }
@@ -47,5 +51,13 @@ sampler2 <- function(R, F, Z, nsamps, burnin, gamma, r_f, icept_z_only = TRUE) {
 
 rmatNorm <- function(M, U, V) {
     .Call(`_BayesPortfolio_rmatNorm`, M, U, V)
+}
+
+Mahalanobis <- function(x, center, cov) {
+    .Call(`_BayesPortfolio_Mahalanobis`, x, center, cov)
+}
+
+dmvnorm_arma <- function(x, mean, sigma, log = FALSE) {
+    .Call(`_BayesPortfolio_dmvnorm_arma`, x, mean, sigma, log)
 }
 

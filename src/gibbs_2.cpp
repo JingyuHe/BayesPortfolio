@@ -104,6 +104,8 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double ri
     arma::mat weight_output(nsamps, N);
     arma::mat Sigma_f_output(nsamps, pow(K, 2));
 
+
+    // MLE estimators for 
     
     for(size_t i = 0; i < nsamps; i ++ ){
 
@@ -168,8 +170,9 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double ri
         // cout << cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets) << endl;
 
         // cout << (1.0 / risk - r_f)  << endl;
-        weight = (1.0 / risk - r_f) * cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets);
+        // weight = (1.0 / risk - r_f) * cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets);
 
+        weight = 1.0 / risk * cov_assets_inv * mu_assets;
     // cout << weight << endl;
         // cout << mu_assets << endl;
 
