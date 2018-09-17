@@ -5,12 +5,20 @@ gibbs_2 <- function(R, F, Z, X, risk, r_f, nsamps) {
     .Call(`_BayesPortfolio_gibbs_2`, R, F, Z, X, risk, r_f, nsamps)
 }
 
+gibbs_fast <- function(R, F, Z, X, risk, r_f, nsamps) {
+    .Call(`_BayesPortfolio_gibbs_fast`, R, F, Z, X, risk, r_f, nsamps)
+}
+
 gibbs <- function(R, F, X, Xi, Z, T, N, K, M, nsamp, burnin, tau) {
     .Call(`_BayesPortfolio_gibbs`, R, F, X, Xi, Z, T, N, K, M, nsamp, burnin, tau)
 }
 
 log_posterior <- function(R, F, Z, X) {
     .Call(`_BayesPortfolio_log_posterior`, R, F, Z, X)
+}
+
+rmultireg_IG_multirun <- function(Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps) {
+    invisible(.Call(`_BayesPortfolio_rmultireg_IG_multirun`, Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps))
 }
 
 rmultireg_IG_singlerun_alone <- function(Y, X, betabar_all, A, nu) {
@@ -23,6 +31,10 @@ rmultireg_IG_singlerun <- function(Y, X, betabar_all, A, nu, beta_mat, sigmasq_v
 
 rmultireg_IG <- function(Y, X, betabar_all, A, nu, R, keep) {
     .Call(`_BayesPortfolio_rmultireg_IG`, Y, X, betabar_all, A, nu, R, keep)
+}
+
+rmultireg_IW_multirun <- function(Y, X, Bbar, A, nu, V, B_output, Sigma_output, nsamps) {
+    invisible(.Call(`_BayesPortfolio_rmultireg_IW_multirun`, Y, X, Bbar, A, nu, V, B_output, Sigma_output, nsamps))
 }
 
 rmultireg_IW_singlerun <- function(Y, X, Bbar, A, nu, V, B, Sigma) {

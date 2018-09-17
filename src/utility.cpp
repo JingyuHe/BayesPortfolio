@@ -141,3 +141,8 @@ arma::vec dmvnorm_arma(arma::mat x, arma::rowvec mean, arma::mat sigma, bool log
         return(exp(logretval));
     }
 }
+
+
+
+
+
