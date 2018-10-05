@@ -1,8 +1,8 @@
 Package: BayesPortfolio
 Type: Package
 Title: What the package does (short line)
-Version: 1.1
-Date: 2018-09-17
+Version: 1.2
+Date: 2018-10-05
 Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)

@@ -5,6 +5,10 @@ gibbs_2 <- function(R, F, Z, X, risk, r_f, nsamps) {
     .Call(`_BayesPortfolio_gibbs_2`, R, F, Z, X, risk, r_f, nsamps)
 }
 
+gibbs_fast_hedge <- function(R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_cov, A_f_prior_mean, A_f_prior_cov, A_z_prior_mean, A_z_prior_cov, nu, V_F, V_Z) {
+    .Call(`_BayesPortfolio_gibbs_fast_hedge`, R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_cov, A_f_prior_mean, A_f_prior_cov, A_z_prior_mean, A_z_prior_cov, nu, V_F, V_Z)
+}
+
 gibbs_fast <- function(R, F, Z, X, risk, r_f, nsamps) {
     .Call(`_BayesPortfolio_gibbs_fast`, R, F, Z, X, risk, r_f, nsamps)
 }
@@ -17,8 +21,8 @@ log_posterior <- function(R, F, Z, X) {
     .Call(`_BayesPortfolio_log_posterior`, R, F, Z, X)
 }
 
-rmultireg_IG_multirun <- function(Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps) {
-    invisible(.Call(`_BayesPortfolio_rmultireg_IG_multirun`, Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps))
+rmultireg_IG_multirun <- function(Y, X, betabar_all, A, nu, beta_output, sigmasq_vec_output, nsamps) {
+    invisible(.Call(`_BayesPortfolio_rmultireg_IG_multirun`, Y, X, betabar_all, A, nu, beta_output, sigmasq_vec_output, nsamps))
 }
 
 rmultireg_IG_singlerun_alone <- function(Y, X, betabar_all, A, nu) {

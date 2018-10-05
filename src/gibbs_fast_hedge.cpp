@@ -16,7 +16,7 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps){
+Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_cov, arma::mat A_f_prior_mean, arma::mat A_f_prior_cov, arma::mat A_z_prior_mean, arma::mat A_z_prior_cov, double nu, arma::mat V_F, arma::mat V_Z){
 
     // X is one period lagged Z
 
@@ -48,21 +48,43 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
     arma::mat W_Z;
 
 
-    // set priors
-    arma::mat A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
-    arma::mat A_r_prior_cov = arma::eye<arma::mat>(1 + K, 1 + K) * 1000;
+    // // set priors
+    // if(A_r_prior_mean == NULL){
+    //     A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
+    // }
 
-    arma::mat A_f_prior_mean = arma::zeros<arma::mat>(M + 1, K);
-    arma::mat A_f_prior_cov = arma::eye<arma::mat>(M + 1, M + 1) * 1000;
+    // if(A_r_prior_cov == NULL){
+    //     A_r_prior_cov = arma::eye<arma::mat>(1 + K, 1 + K) * 1000;
+    // }
 
-    arma::mat A_z_prior_mean = arma::zeros<arma::mat>(1 + M + N + K, M);
-    arma::mat A_z_prior_cov = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K) * 1000;
+    // if(A_f_prior_mean == NULL){
+    //     A_f_prior_mean = arma::zeros<arma::mat>(M + 1, K);
+    // }
 
-    // priors of inverse wishart, flat, so all zeros
-    double nu = 3.0;
-    arma::mat V_F = arma::eye<arma::mat>(K, K) * nu;
-    arma::mat V_Z = arma::eye<arma::mat>(M, M) * nu;
+    // if(A_f_prior_cov == NULL){
+    //     A_f_prior_cov = arma::eye<arma::mat>(M + 1, M + 1) * 1000;
+    // }
 
+    // if(A_z_prior_mean == NULL){
+    //     A_z_prior_mean = arma::zeros<arma::mat>(1 + M + N + K, M);
+    // }
+
+    // if(A_z_prior_cov == NULL){
+    //     A_z_prior_cov = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K) * 1000;
+    // }
+
+    // // priors of inverse wishart, flat, so all zeros
+    // if(nu == NULL){
+    //     nu = 3.0;
+    // }
+
+    // if(V_F == NULL){
+    //     V_F = arma::eye<arma::mat>(K, K) * nu;
+    // }
+
+    // if(V_Z == NULL){
+    //     V_Z = arma::eye<arma::mat>(M, M) * nu;
+    // }
 
     arma::mat sigma_zz_vec;
 

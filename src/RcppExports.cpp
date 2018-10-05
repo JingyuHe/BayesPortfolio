@@ -23,6 +23,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gibbs_fast_hedge
+Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_cov, arma::mat A_f_prior_mean, arma::mat A_f_prior_cov, arma::mat A_z_prior_mean, arma::mat A_z_prior_cov, double nu, arma::mat V_F, arma::mat V_Z);
+RcppExport SEXP _BayesPortfolio_gibbs_fast_hedge(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP, SEXP riskSEXP, SEXP r_fSEXP, SEXP nsampsSEXP, SEXP A_r_prior_meanSEXP, SEXP A_r_prior_covSEXP, SEXP A_f_prior_meanSEXP, SEXP A_f_prior_covSEXP, SEXP A_z_prior_meanSEXP, SEXP A_z_prior_covSEXP, SEXP nuSEXP, SEXP V_FSEXP, SEXP V_ZSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type F(FSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type risk(riskSEXP);
+    Rcpp::traits::input_parameter< double >::type r_f(r_fSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nsamps(nsampsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A_r_prior_mean(A_r_prior_meanSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A_r_prior_cov(A_r_prior_covSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A_f_prior_mean(A_f_prior_meanSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A_f_prior_cov(A_f_prior_covSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A_z_prior_mean(A_z_prior_meanSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type A_z_prior_cov(A_z_prior_covSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type V_F(V_FSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type V_Z(V_ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(gibbs_fast_hedge(R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_cov, A_f_prior_mean, A_f_prior_cov, A_z_prior_mean, A_z_prior_cov, nu, V_F, V_Z));
+    return rcpp_result_gen;
+END_RCPP
+}
 // gibbs_fast
 Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps);
 RcppExport SEXP _BayesPortfolio_gibbs_fast(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP, SEXP riskSEXP, SEXP r_fSEXP, SEXP nsampsSEXP) {
@@ -77,8 +103,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rmultireg_IG_multirun
-void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec, size_t nsamps);
-RcppExport SEXP _BayesPortfolio_rmultireg_IG_multirun(SEXP YSEXP, SEXP XSEXP, SEXP betabar_allSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP beta_matSEXP, SEXP sigmasq_vecSEXP, SEXP nsampsSEXP) {
+void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_output, arma::mat& sigmasq_vec_output, size_t nsamps);
+RcppExport SEXP _BayesPortfolio_rmultireg_IG_multirun(SEXP YSEXP, SEXP XSEXP, SEXP betabar_allSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP beta_outputSEXP, SEXP sigmasq_vec_outputSEXP, SEXP nsampsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat const& >::type Y(YSEXP);
@@ -86,10 +112,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat const& >::type betabar_all(betabar_allSEXP);
     Rcpp::traits::input_parameter< arma::mat const& >::type A(ASEXP);
     Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type beta_mat(beta_matSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type sigmasq_vec(sigmasq_vecSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type beta_output(beta_outputSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type sigmasq_vec_output(sigmasq_vec_outputSEXP);
     Rcpp::traits::input_parameter< size_t >::type nsamps(nsampsSEXP);
-    rmultireg_IG_multirun(Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps);
+    rmultireg_IG_multirun(Y, X, betabar_all, A, nu, beta_output, sigmasq_vec_output, nsamps);
     return R_NilValue;
 END_RCPP
 }
@@ -307,6 +333,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 7},
+    {"_BayesPortfolio_gibbs_fast_hedge", (DL_FUNC) &_BayesPortfolio_gibbs_fast_hedge, 16},
     {"_BayesPortfolio_gibbs_fast", (DL_FUNC) &_BayesPortfolio_gibbs_fast, 7},
     {"_BayesPortfolio_gibbs", (DL_FUNC) &_BayesPortfolio_gibbs, 12},
     {"_BayesPortfolio_log_posterior", (DL_FUNC) &_BayesPortfolio_log_posterior, 4},
