@@ -40,4 +40,4 @@ void rmultireg_IW_multirun(arma::mat const& Y, arma::mat const& X, arma::mat con
 
 
 
-void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_output, arma::mat& sigmasq_vec_output, size_t nsamps);
+void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec, size_t nsamps);

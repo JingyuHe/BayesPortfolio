@@ -111,9 +111,8 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
     res_F = F - X * inv(trans(X) * X) * trans(X) * F;
     W_Z = join_rows(join_rows(X, res_R), res_F);
 
-    // cout << "ok 1" << endl;
-    // rmultireg_IG_multirun(R, H, A_r_prior_mean, A_r_prior_cov, nu, Gamma_R_output, Psi_output, nsamps);
-    // cout << "ok 2" << endl;
+
+
 
         // first regression
         // for each i, regress r_i on factors F
@@ -139,9 +138,6 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
 
 
-
-
-
     for(size_t i = 0; i < nsamps; i ++ ){
 
 
@@ -155,19 +151,16 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
         // 0 ~ M are Omega_z
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
-
-
         Delta = trans(Delta_output.row(i));
         Delta.resize(M + 1 + K + N, M);
         Sigma_zz_condition = trans(Sigma_zz_condition_output.row(i));
         Sigma_zz_condition.resize(M, M);
         Sigma_u = trans(Sigma_u_output.row(i));
         Sigma_u.resize(K, K);
-        Gamma_R = trans(Gamma_R_output.row(i));
-        Gamma_R.resize(K + 1, N);
+        // Gamma_R = trans(Gamma_R_output.row(i));
+        // Gamma_R.resize(K + 1, N);
         Omega_F = trans(Omega_F_output.row(i));
         Omega_F.resize(M + 1, K);
-        Psi = trans(Psi_output.row(i));
 
 
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M+1, M + K));

@@ -21,8 +21,8 @@ log_posterior <- function(R, F, Z, X) {
     .Call(`_BayesPortfolio_log_posterior`, R, F, Z, X)
 }
 
-rmultireg_IG_multirun <- function(Y, X, betabar_all, A, nu, beta_output, sigmasq_vec_output, nsamps) {
-    invisible(.Call(`_BayesPortfolio_rmultireg_IG_multirun`, Y, X, betabar_all, A, nu, beta_output, sigmasq_vec_output, nsamps))
+rmultireg_IG_multirun <- function(Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps) {
+    invisible(.Call(`_BayesPortfolio_rmultireg_IG_multirun`, Y, X, betabar_all, A, nu, beta_mat, sigmasq_vec, nsamps))
 }
 
 rmultireg_IG_singlerun_alone <- function(Y, X, betabar_all, A, nu) {
