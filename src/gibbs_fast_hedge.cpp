@@ -152,15 +152,15 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
         Delta = trans(Delta_output.row(i));
-        Delta.resize(M + 1 + K + N, M);
+        Delta.reshape(M + 1 + K + N, M);
         Sigma_zz_condition = trans(Sigma_zz_condition_output.row(i));
-        Sigma_zz_condition.resize(M, M);
+        Sigma_zz_condition.reshape(M, M);
         Sigma_u = trans(Sigma_u_output.row(i));
-        Sigma_u.resize(K, K);
+        Sigma_u.reshape(K, K);
         // Gamma_R = trans(Gamma_R_output.row(i));
-        // Gamma_R.resize(K + 1, N);
+        // Gamma_R.reshape(K + 1, N);
         Omega_F = trans(Omega_F_output.row(i));
-        Omega_F.resize(M + 1, K);
+        Omega_F.reshape(M + 1, K);
 
 
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M+1, M + K));

@@ -152,15 +152,27 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
         Delta = trans(Delta_output.row(i));
-        Delta.resize(M + 1 + K + N, M);
+        cout << Delta << endl;
+        Delta.reshape(M + 1 + K + N, M);
+        cout << Delta << endl;
         Sigma_zz_condition = trans(Sigma_zz_condition_output.row(i));
-        Sigma_zz_condition.resize(M, M);
+
+                // cout << Sigma_zz_condition << endl;
+
+        Sigma_zz_condition.reshape(M, M);
+        // cout << Sigma_zz_condition << endl;
+
         Sigma_u = trans(Sigma_u_output.row(i));
-        Sigma_u.resize(K, K);
+        Sigma_u.reshape(K, K);
         // Gamma_R = trans(Gamma_R_output.row(i));
-        // Gamma_R.resize(K + 1, N);
+        // Gamma_R.reshape(K + 1, N);
         Omega_F = trans(Omega_F_output.row(i));
-        Omega_F.resize(M + 1, K);
+        Omega_F.reshape(M + 1, K);
+
+
+
+    // cout << Sigma_zz_condition_output.row(i) << endl;
+        cout << Sigma_zz_condition << endl;
 
 
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M+1, M + K));
@@ -184,8 +196,15 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
         mu_assets = alpha + beta * (theta + gamma * (inv(B + eye(B.n_cols, B.n_cols)) * A));
 
+        // cout << Sigma_v << endl;
+
         Sigma_z = inv(eye(pow(M,2), pow(M,2)) - kron(B, B)) * vectorise(Sigma_v);
+
+
+
         Sigma_z.reshape(M, M);
+
+
 
         Sigma_f = gamma * Sigma_z * trans(gamma) + Sigma_u;
 
@@ -218,6 +237,8 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
         weight_output.row(i) = trans(weight);
         Sigma_f_output.row(i) = trans(vectorise(Sigma_f));
+
+
 
     }
 
