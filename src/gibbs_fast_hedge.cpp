@@ -16,7 +16,7 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_cov, arma::mat A_f_prior_mean, arma::mat A_f_prior_cov, arma::mat A_z_prior_mean, arma::mat A_z_prior_cov, double nu, arma::mat V_F, arma::mat V_Z){
+Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_precision, arma::mat A_f_prior_mean, arma::mat A_f_prior_precision, arma::mat A_z_prior_mean, arma::mat A_z_prior_precision, double nu, arma::mat V_F, arma::mat V_Z){
 
     // X is one period lagged Z
 
@@ -50,13 +50,13 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
 
     // // set priors
     // arma::mat A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
-    // arma::mat A_r_prior_cov = arma::eye<arma::mat>(1 + K, 1 + K) * 1000;
+    // arma::mat A_r_prior_precision = arma::eye<arma::mat>(1 + K, 1 + K) * 1000;
 
     // arma::mat A_f_prior_mean = arma::zeros<arma::mat>(M + 1, K);
-    // arma::mat A_f_prior_cov = arma::eye<arma::mat>(M + 1, M + 1) * 1000;
+    // arma::mat A_f_prior_precision = arma::eye<arma::mat>(M + 1, M + 1) * 1000;
 
     // arma::mat A_z_prior_mean = arma::zeros<arma::mat>(1 + M + N + K, M);
-    // arma::mat A_z_prior_cov = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K) * 1000;
+    // arma::mat A_z_prior_precision = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K) * 1000;
 
     // // priors of inverse wishart, flat, so all zeros
     // double nu = 3.0;
@@ -118,7 +118,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // for each i, regress r_i on factors F
 
 
-    rmultireg_IW_multirun(F, X, A_f_prior_mean, A_f_prior_cov, nu, V_F, Omega_F_output, Sigma_u_output, nsamps);
+    rmultireg_IW_multirun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F_output, Sigma_u_output, nsamps);
     
 
 
@@ -134,14 +134,14 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     // create regressors for the third regression
 
 
-    rmultireg_IW_multirun(Z, W_Z, A_z_prior_mean, A_z_prior_cov, nu, V_Z, Delta_output, Sigma_zz_condition_output, nsamps);
+    rmultireg_IW_multirun(Z, W_Z, A_z_prior_mean, A_z_prior_precision, nu, V_Z, Delta_output, Sigma_zz_condition_output, nsamps);
 
 
 
     for(size_t i = 0; i < nsamps; i ++ ){
 
 
-        rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_cov, nu, Gamma_R, Psi);
+        rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_precision, nu, Gamma_R, Psi);
 
 
 

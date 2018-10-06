@@ -5,8 +5,8 @@ gibbs_2 <- function(R, F, Z, X, risk, r_f, nsamps) {
     .Call(`_BayesPortfolio_gibbs_2`, R, F, Z, X, risk, r_f, nsamps)
 }
 
-gibbs_fast_hedge <- function(R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_cov, A_f_prior_mean, A_f_prior_cov, A_z_prior_mean, A_z_prior_cov, nu, V_F, V_Z) {
-    .Call(`_BayesPortfolio_gibbs_fast_hedge`, R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_cov, A_f_prior_mean, A_f_prior_cov, A_z_prior_mean, A_z_prior_cov, nu, V_F, V_Z)
+gibbs_fast_hedge <- function(R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_precision, A_f_prior_mean, A_f_prior_precision, A_z_prior_mean, A_z_prior_precision, nu, V_F, V_Z) {
+    .Call(`_BayesPortfolio_gibbs_fast_hedge`, R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_precision, A_f_prior_mean, A_f_prior_precision, A_z_prior_mean, A_z_prior_precision, nu, V_F, V_Z)
 }
 
 gibbs_fast <- function(R, F, Z, X, risk, r_f, nsamps) {
