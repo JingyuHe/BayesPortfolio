@@ -31,6 +31,7 @@ Rcpp::List gibbs_slow_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     size_t M = Z.n_cols;
 
     // augement F with one column of 1
+    // H is intercept + factors
     arma::mat H = arma::ones<arma::mat>(T, 1);
     H = join_rows(H, F);
 
@@ -107,8 +108,8 @@ Rcpp::List gibbs_slow_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
 
     // MLE estimators for 
 
-    res_R = R - H * inv(trans(H) * H) * trans(H) * R;
-    res_F = F - X * inv(trans(X) * X) * trans(X) * F;
+    // res_R = R - H * inv(trans(H) * H) * trans(H) * R;
+    // res_F = F - X * inv(trans(X) * X) * trans(X) * F;
 
     
     for(size_t i = 0; i < nsamps; i ++ ){
@@ -125,8 +126,8 @@ Rcpp::List gibbs_slow_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
 
 
         // compute residuals of first two regressions
-        // res_R = R - H * Gamma_R;
-        // res_F = F - X * Omega_F;
+        res_R = R - H * Gamma_R;
+        res_F = F - X * Omega_F;
 
         // create regressors for the third regression
         W_Z = join_rows(join_rows(X, res_R), res_F);

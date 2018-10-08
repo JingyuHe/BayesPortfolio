@@ -39,7 +39,7 @@ double sigmasq = 1.0; // initialize
 //   arma::cube betaoutput(R/keep, k, m);
 //   arma::mat sigmaoutput(R/keep, m);
 
-  arma::mat beta_hat;
+  arma::mat btilde;
 
   arma::mat betabar;
   arma::mat beta;
@@ -49,6 +49,13 @@ double sigmasq = 1.0; // initialize
 
   arma::mat res;
 
+  arma::mat RA = chol(A);
+
+  arma::mat W = join_cols(X, RA);
+
+  arma::mat z;
+
+
   for(size_t i = 0; i < m; i ++ ){
       // loop over each y variable
       // assume diagonal covariance matrix, we can run regressions separately
@@ -57,58 +64,19 @@ double sigmasq = 1.0; // initialize
 
     betabar = betabar_all.col(i);
 
+    z = join_cols(y, RA * betabar);
 
-    IR = solve(trimatu(chol(trans(X) * X)), eye(k, k));
+    IR = solve(trimatu(chol(trans(W) * W)), eye(k, k));
 
-    beta_hat = (IR * trans(IR)) * trans(X) * y;
+    btilde = (IR * trans(IR)) * trans(W) * z;
 
-    res = y - X * beta_hat;
+    res = z - W * btilde;
 
     s = as_scalar(trans(res) * res);
 
     sigmasq = (s) / rchisq(1, n)[0];
 
-    beta = beta_hat + sqrt(sigmasq) * (IR * vec(rnorm(k)));
-
-    // sigmasq = sigmasq_vec(i);
-
-    // beta = beta_mat.col(i);
-
-    // double ssq = 1.0;
-    // size_t mkeep;
-    // double s;
-    // mat RA, W, IR;
-    // vec z, btilde, beta;
-    
-    // size_t nvar = X.n_cols;
-    // size_t nobs = y.size();
-    
-    // // vec sigmasqdraw(R/keep);
-    // // mat betadraw(R/keep, nvar);
-    
-
-    // vec Xpy = trans(X)*y;
-    
-    // vec Abetabar = A*betabar;
-    
-
-    // // for (size_t rep=0; rep<R; rep++){   
-      
-    //   //first draw beta | sigmasq
-    //   IR = solve(trimatu(chol(XpX/sigmasq+A)), eye(nvar,nvar)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
-    //   btilde = (IR*trans(IR)) * (Xpy/sigmasq+Abetabar);
-    //   beta = btilde + IR*vec(rnorm(nvar));
-      
-    //   //now draw sigmasq | beta
-    //   s = sum(square(y-X*beta));
-    //   sigmasq = (nu*ssq+s) / rchisq(1,nu+nobs)[0]; //rchisq returns a vectorized object, so using [0] allows for the conversion to double
-          
-    // //   if((rep+1)%keep==0){
-    //     // mkeep = (rep+1)/keep;
-    //     // betadraw(mkeep-1, span::all) = trans(beta);
-    //     // sigmasqdraw[mkeep-1] = sigmasq;
-    // //   }   
-    // // }  
+    beta = btilde + sqrt(sigmasq) * (IR * vec(rnorm(k)));
 
     beta_mat.col(i) = beta;
     sigmasq_vec(i) = sigmasq;

@@ -128,6 +128,10 @@ Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double ri
         // res_R = R - H * Gamma_R;
         // res_F = F - X * Omega_F;
 
+        res_R = R - H * Gamma_R;
+        res_F = F - X * Omega_F;
+
+
         // create regressors for the third regression
         W_Z = join_rows(join_rows(X, res_R), res_F);
 
