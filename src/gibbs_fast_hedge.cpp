@@ -16,7 +16,8 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_precision, arma::mat A_f_prior_mean, arma::mat A_f_prior_precision, arma::mat A_z_prior_mean, arma::mat A_z_prior_precision, double nu, arma::mat V_F, arma::mat V_Z){
+Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_precision, arma::mat A_f_prior_mean, arma::mat A_f_prior_precision, arma::mat A_z_prior_mean, arma::mat A_z_prior_precision, double nu, arma::mat V_F, arma::mat V_Z)
+{
 
     // X is one period lagged Z
 
@@ -41,13 +42,11 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     arma::mat Gamma_R(K + 1, N);
     arma::mat Delta(M + 1 + K + N, M);
 
-
     // cout << Delta.n_cols << endl;
 
     arma::mat res_R;
     arma::mat res_F;
     arma::mat W_Z;
-
 
     // set priors
     // arma::mat A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
@@ -64,9 +63,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     // arma::mat V_F = arma::eye<arma::mat>(K, K) * nu;
     // arma::mat V_Z = arma::eye<arma::mat>(M, M) * nu;
 
-
     arma::mat sigma_zz_vec;
-
 
     // other intermediate variables
     arma::mat Sigma_zz_condition(M, M);
@@ -90,7 +87,6 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     arma::mat weight;
     arma::mat Sigma_f;
 
-
     // initialize outputs
     arma::mat Gamma_R_output(nsamps, Gamma_R.n_elem);
     arma::mat Psi_output(nsamps, Psi.n_elem);
@@ -105,8 +101,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     arma::mat weight_output(nsamps, N);
     arma::mat Sigma_f_output(nsamps, pow(K, 2));
 
-
-    // MLE estimators for 
+    // MLE estimators for
 
     // res_R = R - H * inv(trans(H) * H) * trans(H) * R;
     // res_F = F - X * inv(trans(X) * X) * trans(X) * F;
@@ -114,8 +109,8 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
 
     // rmultire
 
-    
-    for(size_t i = 0; i < nsamps; i ++ ){
+    for (size_t i = 0; i < nsamps; i++)
+    {
 
         // first regression
         // for each i, regress r_i on factors F
@@ -127,7 +122,6 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
 
         rmultireg_IW_singlerun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F, Sigma_u);
 
-
         // compute residuals of first two regressions
         res_R = R - H * Gamma_R;
         res_F = F - X * Omega_F;
@@ -138,20 +132,17 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // third regression
         rmultireg_IW_singlerun(Z, W_Z, A_z_prior_mean, A_z_prior_precision, nu, V_Z, Delta, Sigma_zz_condition);
 
-
-
         // recover unconditonal covariance matrix
         // Delta has 1 + M + K + N columns
         // 0 ~ M are Omega_z
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
-        Sigma_vu_Sigma_u_inv = trans(Delta.rows(M+1, M + K));
+        Sigma_vu_Sigma_u_inv = trans(Delta.rows(M + 1, M + K));
         Sigma_ve_Psi_inv = trans(Delta.rows(M + K + 1, M + K + N));
 
         Sigma_vu = Sigma_vu_Sigma_u_inv * Sigma_u;
         Sigma_ve = Sigma_ve_Psi_inv * diagmat(Psi);
         Sigma_v = Sigma_zz_condition + Sigma_ve_Psi_inv * trans(Sigma_ve) + Sigma_vu_Sigma_u_inv * trans(Sigma_vu);
-
 
         // compute weights
         A = trans(Delta.row(0));
@@ -163,17 +154,14 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
 
         mu_assets = alpha + beta * (theta + gamma * (inv(B + eye(B.n_cols, B.n_cols)) * A));
 
-        Sigma_z = inv(eye(pow(M,2), pow(M,2)) - kron(B, B)) * vectorise(Sigma_v);
+        Sigma_z = inv(eye(pow(M, 2), pow(M, 2)) - kron(B, B)) * vectorise(Sigma_v);
         Sigma_z.reshape(M, M);
 
         Sigma_f = gamma * Sigma_z * trans(gamma) + Sigma_u;
 
         cov_assets = beta * Sigma_f * trans(beta) + diagmat(Psi);
 
-
         cov_assets_inv = inv(cov_assets);
-
-
 
         // cout << cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets) << endl;
 
@@ -181,7 +169,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // weight = (1.0 / risk - r_f) * cov_assets_inv * mu_assets / as_scalar(1 + trans(mu_assets) * cov_assets_inv * mu_assets);
 
         weight = 1.0 / risk * cov_assets_inv * mu_assets;
-    // cout << weight << endl;
+        // cout << weight << endl;
         // cout << mu_assets << endl;
 
         // save samples
@@ -197,7 +185,6 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
         weight_output.row(i) = trans(weight);
         Sigma_f_output.row(i) = trans(vectorise(Sigma_f));
-
     }
 
     return Rcpp::List::create(
@@ -212,7 +199,5 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         Named("cov_assets") = cov_output,
         Named("Sigma_z") = Sigma_z_output,
         Named("weights") = weight_output,
-        Named("Sigma_f") = Sigma_f_output   
-    );
+        Named("Sigma_f") = Sigma_f_output);
 }
-

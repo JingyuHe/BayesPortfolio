@@ -1,8 +1,8 @@
 #include "../inst/include/utility.h"
 
 // [[Rcpp::export]]
-Rcpp::List sampler1(arma::mat& R, arma::mat& F, size_t nsamps, size_t burnin){
-
+Rcpp::List sampler1(arma::mat &R, arma::mat &F, size_t nsamps, size_t burnin)
+{
 
     arma::mat Z;
     size_t n = R.n_rows;
@@ -13,13 +13,13 @@ Rcpp::List sampler1(arma::mat& R, arma::mat& F, size_t nsamps, size_t burnin){
     // create a column of 1 as intercept
     arma::mat icept = arma::ones<mat>(n, 1);
 
-    arma::mat A_z(1 + p_z, p_f); // coefficient of F ~ Z + intercept
+    arma::mat A_z(1 + p_z, p_f);  // coefficient of F ~ Z + intercept
     arma::mat sigma_ff(p_f, p_f); // residual covariance matrix of F ~ Z + intercept
 
     arma::mat U; // temp matrix for (F, F - ZA_z)
 
     arma::mat A_f(1 + 2 * p_f, p_r); // coefficient of R ~ F + (F - ZA_z) + intercept
-    arma::vec sigma_rr(p_r); // residual variance of R ~ F + (F - ZA_z) + intercept, assume diagonal structure
+    arma::vec sigma_rr(p_r);         // residual variance of R ~ F + (F - ZA_z) + intercept, assume diagonal structure
     sigma_rr.fill(1.0);
 
     arma::mat A_f_prior_mean = arma::zeros<arma::mat>(1 + 2 * p_f, p_r);
@@ -33,9 +33,9 @@ Rcpp::List sampler1(arma::mat& R, arma::mat& F, size_t nsamps, size_t burnin){
     arma::mat A_f_out(nsamps, A_f_prior_mean.n_elem);
     arma::mat sigma_rr_out(nsamps, sigma_rr.n_elem);
 
-
     arma::mat Z_aug = arma::join_rows(icept, Z);
-    for(size_t i = 0; i < nsamps + burnin; i ++ ){
+    for (size_t i = 0; i < nsamps + burnin; i++)
+    {
 
         // first regression F ~ Z + intercept
         rmultireg_IW_singlerun(F, Z_aug, A_z_prior_mean, A_z_prior_cov, 1, V, A_z, sigma_ff);
@@ -44,7 +44,8 @@ Rcpp::List sampler1(arma::mat& R, arma::mat& F, size_t nsamps, size_t burnin){
 
         rmultireg_IG_singlerun(R, U, A_f_prior_mean, A_f_prior_cov, 1, A_f, sigma_rr);
 
-        if(i > burnin - 1){
+        if (i > burnin - 1)
+        {
             A_z_out.row(i - burnin) = trans(vectorise(A_z));
             sigma_ff_out.row(i - burnin) = trans(vectorise(sigma_ff));
             A_f_out.row(i - burnin) = trans(vectorise(A_f));
@@ -57,5 +58,4 @@ Rcpp::List sampler1(arma::mat& R, arma::mat& F, size_t nsamps, size_t burnin){
         Named("A_f") = A_f_out,
         Named("sigma_ff") = sigma_ff_out,
         Named("sigma_rr") = sigma_rr_out);
-
 }
