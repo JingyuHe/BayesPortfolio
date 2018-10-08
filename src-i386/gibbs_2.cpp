@@ -16,7 +16,7 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps){
+Rcpp::List gibbs_2(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps){
 
     // X is one period lagged Z
 
@@ -50,13 +50,13 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
     // set priors
     arma::mat A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
-    arma::mat A_r_prior_precision = arma::eye<arma::mat>(1 + K, 1 + K);
+    arma::mat A_r_prior_cov = arma::eye<arma::mat>(1 + K, 1 + K) * 1000;
 
     arma::mat A_f_prior_mean = arma::zeros<arma::mat>(M + 1, K);
-    arma::mat A_f_prior_precision = arma::eye<arma::mat>(M + 1, M + 1);
+    arma::mat A_f_prior_cov = arma::eye<arma::mat>(M + 1, M + 1) * 1000;
 
     arma::mat A_z_prior_mean = arma::zeros<arma::mat>(1 + M + N + K, M);
-    arma::mat A_z_prior_precision = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K);
+    arma::mat A_z_prior_cov = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K) * 1000;
 
     // priors of inverse wishart, flat, so all zeros
     double nu = 3.0;
@@ -109,72 +109,38 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
     res_R = R - H * inv(trans(H) * H) * trans(H) * R;
     res_F = F - X * inv(trans(X) * X) * trans(X) * F;
-    W_Z = join_rows(join_rows(X, res_R), res_F);
 
-
-
+    
+    for(size_t i = 0; i < nsamps; i ++ ){
 
         // first regression
         // for each i, regress r_i on factors F
 
-
-    rmultireg_IW_multirun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F_output, Sigma_u_output, nsamps);
-    
-
+        rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_cov, nu, Gamma_R, Psi);
 
         // second regression
-    // regress F on X
+        // regress F on X
+
+        rmultireg_IW_singlerun(F, X, A_f_prior_mean, A_f_prior_cov, nu, V_F, Omega_F, Sigma_u);
 
 
+        // compute residuals of first two regressions
+        // res_R = R - H * Gamma_R;
+        // res_F = F - X * Omega_F;
 
-    // compute residuals of first two regressions
-    // res_R = R - H * Gamma_R;
-    // res_F = F - X * Omega_F;
-
-    // create regressors for the third regression
-
-
-    rmultireg_IW_multirun(Z, W_Z, A_z_prior_mean, A_z_prior_precision, nu, V_Z, Delta_output, Sigma_zz_condition_output, nsamps);
-
-
-
-    for(size_t i = 0; i < nsamps; i ++ ){
-
-
-        rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_precision, nu, Gamma_R, Psi);
-
-
+        // create regressors for the third regression
+        W_Z = join_rows(join_rows(X, res_R), res_F);
 
         // third regression
+        rmultireg_IW_singlerun(Z, W_Z, A_z_prior_mean, A_z_prior_cov, nu, V_Z, Delta, Sigma_zz_condition);
+
+
+
         // recover unconditonal covariance matrix
         // Delta has 1 + M + K + N columns
         // 0 ~ M are Omega_z
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
-        Delta = trans(Delta_output.row(i));
-        // cout << Delta << endl;
-        Delta.reshape(M + 1 + K + N, M);
-        // cout << Delta << endl;
-        Sigma_zz_condition = trans(Sigma_zz_condition_output.row(i));
-
-                // cout << Sigma_zz_condition << endl;
-
-        Sigma_zz_condition.reshape(M, M);
-        // cout << Sigma_zz_condition << endl;
-
-        Sigma_u = trans(Sigma_u_output.row(i));
-        Sigma_u.reshape(K, K);
-        // Gamma_R = trans(Gamma_R_output.row(i));
-        // Gamma_R.reshape(K + 1, N);
-        Omega_F = trans(Omega_F_output.row(i));
-        Omega_F.reshape(M + 1, K);
-
-
-
-    // cout << Sigma_zz_condition_output.row(i) << endl;
-        // cout << Sigma_zz_condition << endl;
-
-
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M+1, M + K));
         Sigma_ve_Psi_inv = trans(Delta.rows(M + K + 1, M + K + N));
 
@@ -184,9 +150,6 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
 
         // compute weights
-
-
-
         A = trans(Delta.row(0));
         B = trans(Delta.rows(1, M));
         alpha = trans(Gamma_R.row(0));
@@ -196,15 +159,8 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
         mu_assets = alpha + beta * (theta + gamma * (inv(B + eye(B.n_cols, B.n_cols)) * A));
 
-        // cout << Sigma_v << endl;
-
         Sigma_z = inv(eye(pow(M,2), pow(M,2)) - kron(B, B)) * vectorise(Sigma_v);
-
-
-
         Sigma_z.reshape(M, M);
-
-
 
         Sigma_f = gamma * Sigma_z * trans(gamma) + Sigma_u;
 
@@ -230,15 +186,13 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
         mu_output.row(i) = trans(mu_assets);
         Gamma_R_output.row(i) = trans(vectorise(Gamma_R));
         Psi_output.row(i) = trans(Psi);
-        // Omega_F_output.row(i) = trans(vectorise(Omega_F));
-        // Sigma_u_output.row(i) = trans(vectorise(Sigma_u));
-        // Delta_output.row(i) = trans(vectorise(Delta));
-        // Sigma_zz_condition_output.row(i) = trans(vectorise(Sigma_zz_condition));
+        Omega_F_output.row(i) = trans(vectorise(Omega_F));
+        Sigma_u_output.row(i) = trans(vectorise(Sigma_u));
+        Delta_output.row(i) = trans(vectorise(Delta));
+        Sigma_zz_condition_output.row(i) = trans(vectorise(Sigma_zz_condition));
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
         weight_output.row(i) = trans(weight);
         Sigma_f_output.row(i) = trans(vectorise(Sigma_f));
-
-
 
     }
 

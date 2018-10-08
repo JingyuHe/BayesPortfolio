@@ -1,7 +1,7 @@
 #include "../inst/include/utility.h"
 
 // [[Rcpp::export]]
-void rmultireg_IW_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V, arma::mat& B_output, arma::mat& Sigma_output, size_t nsamps) {
+void rmultireg_IW_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V, arma::mat& B, arma::mat& Sigma) {
 
 // Keunwoo Kim 09/09/2014
 
@@ -40,7 +40,6 @@ void rmultireg_IW_multirun(arma::mat const& Y, arma::mat const& X, arma::mat con
   // mat C;
   // rwishart_bayesm(nu+n, VSinv, CI, C);
 
-  
 
   mat RA = chol(A);
   mat W = join_cols(X, RA);
@@ -53,19 +52,14 @@ void rmultireg_IW_multirun(arma::mat const& Y, arma::mat const& X, arma::mat con
   mat VSinv = ucholinv*trans(ucholinv);
   mat CI;
   mat C;
-  mat draw;
-  mat B;
-  mat Sigma;
+  rwishart_bayesm(nu+n, VSinv, CI, C);
 
+  
 
-  for(size_t i = 0; i < nsamps; i ++ ){
-      rwishart_bayesm(nu+n, VSinv, CI, C);
-      draw = mat(rnorm(k*m));
-      draw.reshape(k,m);
-      B = Btilde + IR*draw*trans(CI);
-      Sigma = CI * trans(CI);
-      B_output.row(i) = trans(vectorise(B));
-      Sigma_output.row(i) = trans(vectorise(Sigma));
-  }
+  mat draw = mat(rnorm(k*m));
+  draw.reshape(k,m);
+  B = Btilde + IR*draw*trans(CI);
+  Sigma = CI * trans(CI);
+
   return;
 }

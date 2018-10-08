@@ -16,7 +16,7 @@
 // available from R
 //
 // [[Rcpp::export]]
-Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps){
+Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_precision, arma::mat A_f_prior_mean, arma::mat A_f_prior_precision, arma::mat A_z_prior_mean, arma::mat A_z_prior_precision, double nu, arma::mat V_F, arma::mat V_Z){
 
     // X is one period lagged Z
 
@@ -48,20 +48,20 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
     arma::mat W_Z;
 
 
-    // set priors
-    arma::mat A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
-    arma::mat A_r_prior_precision = arma::eye<arma::mat>(1 + K, 1 + K);
+    // // set priors
+    // arma::mat A_r_prior_mean = arma::zeros<arma::mat>(K + 1, N);
+    // arma::mat A_r_prior_precision = arma::eye<arma::mat>(1 + K, 1 + K) * 1000;
 
-    arma::mat A_f_prior_mean = arma::zeros<arma::mat>(M + 1, K);
-    arma::mat A_f_prior_precision = arma::eye<arma::mat>(M + 1, M + 1);
+    // arma::mat A_f_prior_mean = arma::zeros<arma::mat>(M + 1, K);
+    // arma::mat A_f_prior_precision = arma::eye<arma::mat>(M + 1, M + 1) * 1000;
 
-    arma::mat A_z_prior_mean = arma::zeros<arma::mat>(1 + M + N + K, M);
-    arma::mat A_z_prior_precision = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K);
+    // arma::mat A_z_prior_mean = arma::zeros<arma::mat>(1 + M + N + K, M);
+    // arma::mat A_z_prior_precision = arma::eye<arma::mat>(1 + M + N + K, 1 + M + N + K) * 1000;
 
-    // priors of inverse wishart, flat, so all zeros
-    double nu = 3.0;
-    arma::mat V_F = arma::eye<arma::mat>(K, K) * nu;
-    arma::mat V_Z = arma::eye<arma::mat>(M, M) * nu;
+    // // priors of inverse wishart, flat, so all zeros
+    // double nu = 3.0;
+    // arma::mat V_F = arma::eye<arma::mat>(K, K) * nu;
+    // arma::mat V_Z = arma::eye<arma::mat>(M, M) * nu;
 
 
     arma::mat sigma_zz_vec;
@@ -152,27 +152,15 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
         Delta = trans(Delta_output.row(i));
-        // cout << Delta << endl;
         Delta.reshape(M + 1 + K + N, M);
-        // cout << Delta << endl;
         Sigma_zz_condition = trans(Sigma_zz_condition_output.row(i));
-
-                // cout << Sigma_zz_condition << endl;
-
         Sigma_zz_condition.reshape(M, M);
-        // cout << Sigma_zz_condition << endl;
-
         Sigma_u = trans(Sigma_u_output.row(i));
         Sigma_u.reshape(K, K);
         // Gamma_R = trans(Gamma_R_output.row(i));
         // Gamma_R.reshape(K + 1, N);
         Omega_F = trans(Omega_F_output.row(i));
         Omega_F.reshape(M + 1, K);
-
-
-
-    // cout << Sigma_zz_condition_output.row(i) << endl;
-        // cout << Sigma_zz_condition << endl;
 
 
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M+1, M + K));
@@ -196,15 +184,8 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
 
         mu_assets = alpha + beta * (theta + gamma * (inv(B + eye(B.n_cols, B.n_cols)) * A));
 
-        // cout << Sigma_v << endl;
-
         Sigma_z = inv(eye(pow(M,2), pow(M,2)) - kron(B, B)) * vectorise(Sigma_v);
-
-
-
         Sigma_z.reshape(M, M);
-
-
 
         Sigma_f = gamma * Sigma_z * trans(gamma) + Sigma_u;
 
@@ -237,8 +218,6 @@ Rcpp::List gibbs_fast(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
         weight_output.row(i) = trans(weight);
         Sigma_f_output.row(i) = trans(vectorise(Sigma_f));
-
-
 
     }
 
