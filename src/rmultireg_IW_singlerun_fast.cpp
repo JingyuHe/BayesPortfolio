@@ -1,7 +1,7 @@
 #include "../inst/include/utility.h"
 
 // [[Rcpp::export]]
-void rmultireg_IW_singlerun(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V, arma::mat& B, arma::mat& Sigma) {
+void rmultireg_IW_singlerun_fast(arma::mat const& Y, arma::mat const& X, arma::mat const& Bbar, arma::mat const& A, double nu, arma::mat const& V, arma::mat& B, arma::mat& Sigma) {
 
 // Keunwoo Kim 09/09/2014
 

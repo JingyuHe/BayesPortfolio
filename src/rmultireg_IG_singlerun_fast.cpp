@@ -2,7 +2,7 @@
 
 
 // [[Rcpp::export]]
-void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec) {
+void rmultireg_IG_singlerun_fast(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& beta_mat, arma::vec& sigmasq_vec) {
 
 double sigmasq = 1.0; // initialize
 
