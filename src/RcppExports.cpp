@@ -41,8 +41,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // gibbs_fast_hedge
-Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_precision, arma::mat A_f_prior_mean, arma::mat A_f_prior_precision, arma::mat A_z_prior_mean, arma::mat A_z_prior_precision, double nu, arma::mat V_F, arma::mat V_Z);
-RcppExport SEXP _BayesPortfolio_gibbs_fast_hedge(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP, SEXP riskSEXP, SEXP r_fSEXP, SEXP nsampsSEXP, SEXP A_r_prior_meanSEXP, SEXP A_r_prior_precisionSEXP, SEXP A_f_prior_meanSEXP, SEXP A_f_prior_precisionSEXP, SEXP A_z_prior_meanSEXP, SEXP A_z_prior_precisionSEXP, SEXP nuSEXP, SEXP V_FSEXP, SEXP V_ZSEXP) {
+Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, double risk, double r_f, size_t nsamps, arma::mat A_r_prior_mean, arma::mat A_r_prior_precision, arma::mat A_f_prior_mean, arma::mat A_f_prior_precision, arma::mat A_z_prior_mean, arma::mat A_z_prior_precision, double nu, arma::mat V_F, arma::mat V_Z, size_t n_hedge);
+RcppExport SEXP _BayesPortfolio_gibbs_fast_hedge(SEXP RSEXP, SEXP FSEXP, SEXP ZSEXP, SEXP XSEXP, SEXP riskSEXP, SEXP r_fSEXP, SEXP nsampsSEXP, SEXP A_r_prior_meanSEXP, SEXP A_r_prior_precisionSEXP, SEXP A_f_prior_meanSEXP, SEXP A_f_prior_precisionSEXP, SEXP A_z_prior_meanSEXP, SEXP A_z_prior_precisionSEXP, SEXP nuSEXP, SEXP V_FSEXP, SEXP V_ZSEXP, SEXP n_hedgeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type V_F(V_FSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type V_Z(V_ZSEXP);
-    rcpp_result_gen = Rcpp::wrap(gibbs_fast_hedge(R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_precision, A_f_prior_mean, A_f_prior_precision, A_z_prior_mean, A_z_prior_precision, nu, V_F, V_Z));
+    Rcpp::traits::input_parameter< size_t >::type n_hedge(n_hedgeSEXP);
+    rcpp_result_gen = Rcpp::wrap(gibbs_fast_hedge(R, F, Z, X, risk, r_f, nsamps, A_r_prior_mean, A_r_prior_precision, A_f_prior_mean, A_f_prior_precision, A_z_prior_mean, A_z_prior_precision, nu, V_F, V_Z, n_hedge));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -410,7 +411,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_BayesPortfolio_gibbs_2", (DL_FUNC) &_BayesPortfolio_gibbs_2, 7},
     {"_BayesPortfolio_gibbs_fast_2", (DL_FUNC) &_BayesPortfolio_gibbs_fast_2, 7},
-    {"_BayesPortfolio_gibbs_fast_hedge", (DL_FUNC) &_BayesPortfolio_gibbs_fast_hedge, 16},
+    {"_BayesPortfolio_gibbs_fast_hedge", (DL_FUNC) &_BayesPortfolio_gibbs_fast_hedge, 17},
     {"_BayesPortfolio_gibbs_fast", (DL_FUNC) &_BayesPortfolio_gibbs_fast, 7},
     {"_BayesPortfolio_gibbs_slow_hedge", (DL_FUNC) &_BayesPortfolio_gibbs_slow_hedge, 16},
     {"_BayesPortfolio_gibbs", (DL_FUNC) &_BayesPortfolio_gibbs, 12},
