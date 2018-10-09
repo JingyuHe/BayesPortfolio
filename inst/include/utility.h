@@ -27,4 +27,4 @@ void runireg_singlerun(arma::vec const &y, arma::mat const &X, arma::vec const &
 
 void rmultireg_IW_multirun(arma::mat const &Y, arma::mat const &X, arma::mat const &Bbar, arma::mat const &A, double nu, arma::mat const &V, arma::mat &B_output, arma::mat &Sigma_output, size_t nsamps);
 
-void rmultireg_IG_multirun(arma::mat const &Y, arma::mat const &X, arma::mat const &betabar_all, arma::mat const &A, double nu, arma::mat &beta_mat, arma::vec &sigmasq_vec, size_t nsamps);
+void rmultireg_IG_multirun(arma::mat const &Y, arma::mat const &X, arma::mat const &betabar_all, arma::mat const &A, double nu, arma::mat &B_output, arma::mat &Sigma_output, size_t nsamps);

@@ -146,7 +146,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rmultireg_IG_multirun
-void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& B_output, arma::vec& Sigma_output, size_t nsamps);
+void rmultireg_IG_multirun(arma::mat const& Y, arma::mat const& X, arma::mat const& betabar_all, arma::mat const& A, double nu, arma::mat& B_output, arma::mat& Sigma_output, size_t nsamps);
 RcppExport SEXP _BayesPortfolio_rmultireg_IG_multirun(SEXP YSEXP, SEXP XSEXP, SEXP betabar_allSEXP, SEXP ASEXP, SEXP nuSEXP, SEXP B_outputSEXP, SEXP Sigma_outputSEXP, SEXP nsampsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -156,7 +156,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat const& >::type A(ASEXP);
     Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type B_output(B_outputSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type Sigma_output(Sigma_outputSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type Sigma_output(Sigma_outputSEXP);
     Rcpp::traits::input_parameter< size_t >::type nsamps(nsampsSEXP);
     rmultireg_IG_multirun(Y, X, betabar_all, A, nu, B_output, Sigma_output, nsamps);
     return R_NilValue;

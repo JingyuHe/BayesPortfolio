@@ -1,7 +1,7 @@
 #include "../inst/include/utility.h"
 
 // [[Rcpp::export]]
-void rmultireg_IG_multirun(arma::mat const &Y, arma::mat const &X, arma::mat const &betabar_all, arma::mat const &A, double nu, arma::mat &B_output, arma::vec &Sigma_output, size_t nsamps)
+void rmultireg_IG_multirun(arma::mat const &Y, arma::mat const &X, arma::mat const &betabar_all, arma::mat const &A, double nu, arma::mat &B_output, arma::mat &Sigma_output, size_t nsamps)
 {
 
     double sigmasq = 1.0; // initialize
@@ -59,9 +59,9 @@ void rmultireg_IG_multirun(arma::mat const &Y, arma::mat const &X, arma::mat con
 
     arma::mat temp = (IR * trans(IR)) * trans(W);
 
-    arma::mat beta_mat;
+    arma::mat beta_mat(k, m);
 
-    arma::vec sigmasq_vec;
+    arma::vec sigmasq_vec(m);
 
     for (size_t j = 0; j < nsamps; j++)
     {
@@ -90,7 +90,7 @@ void rmultireg_IG_multirun(arma::mat const &Y, arma::mat const &X, arma::mat con
             sigmasq_vec(i) = sigmasq;
         }
         B_output.row(j) = trans(vectorise(beta_mat));
-        Sigma_output.row(j) = sigmasq_vec;
+        Sigma_output.row(j) = trans(sigmasq_vec);
     }
 
     return;

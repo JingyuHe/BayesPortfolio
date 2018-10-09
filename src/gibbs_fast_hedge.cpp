@@ -107,6 +107,9 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     // res_F = F - X * inv(trans(X) * X) * trans(X) * F;
     rmultireg_IW_multirun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F_output, Sigma_u_output, nsamps);
 
+
+    rmultireg_IG_multirun(R, H, A_r_prior_mean, A_r_prior_precision, nu, Gamma_R_output, Psi_output, nsamps);
+
     // rmultire
 
     for (size_t i = 0; i < nsamps; i++)
@@ -115,14 +118,19 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // first regression
         // for each i, regress r_i on factors F
 
-        rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_precision, nu, Gamma_R, Psi);
+        // rmultireg_IG_singlerun(R, H, A_r_prior_mean, A_r_prior_precision, nu, Gamma_R, Psi);
 
         // second regression
         // regress F on X
 
-        rmultireg_IW_singlerun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F, Sigma_u);
+        // rmultireg_IW_singlerun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F, Sigma_u);
 
         // compute residuals of first two regressions
+
+        Gamma_R = Gamma_R_output.row(i);
+        Omega_F = Omega_F_output.row(i);
+        Gamma_R.reshape(K + 1, N);
+        Omega_F.reshape(M + 1, K);
         res_R = R - H * Gamma_R;
         res_F = F - X * Omega_F;
 
@@ -176,10 +184,10 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         cov_output.row(i) = trans(vectorise(cov_assets));
         Sigma_z_output.row(i) = trans(vectorise(Sigma_z));
         mu_output.row(i) = trans(mu_assets);
-        Gamma_R_output.row(i) = trans(vectorise(Gamma_R));
-        Psi_output.row(i) = trans(Psi);
-        Omega_F_output.row(i) = trans(vectorise(Omega_F));
-        Sigma_u_output.row(i) = trans(vectorise(Sigma_u));
+        // Gamma_R_output.row(i) = trans(vectorise(Gamma_R));
+        // Psi_output.row(i) = trans(Psi);
+        // Omega_F_output.row(i) = trans(vectorise(Omega_F));
+        // Sigma_u_output.row(i) = trans(vectorise(Sigma_u));
         Delta_output.row(i) = trans(vectorise(Delta));
         Sigma_zz_condition_output.row(i) = trans(vectorise(Sigma_zz_condition));
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
