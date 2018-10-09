@@ -230,7 +230,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
             beta_nothedge = trans(beta.cols(1, K - 1));
             mu_factor_hedge = mu_factors.row(0);
             mu_factor_nothedge = mu_factors.rows(1, K - 1);
-            cov_factor_hedge = Sigma_f.submat(0, 0, 1, 1);
+            cov_factor_hedge = Sigma_f.submat(0, 0, 0, 0);
             cov_factor_nothedge = Sigma_f.submat(1, 1, K - 1, K - 1);
             cov_factor_hedge_nothedge = Sigma_f.submat(0, 1, 0, K - 1);
             theta_factor_hedge = Omega_F.submat(1, 0, M, 0);
@@ -252,9 +252,20 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // cout << Omega_F.n_rows << " " << Omega_F.n_cols << endl;
         // cout << M << " " << K << endl;
 
+        // cout << theta_factor_hedge.n_rows << " " << theta_factor_hedge.n_cols << endl;
+        // cout << theta_factor_nothedge.n_rows << " " << theta_factor_nothedge.n_cols << endl;
+
         cov_factor_hedge_tilde_r = (trans(theta_factor_hedge) * Sigma_z * theta_factor_nothedge + cov_factor_hedge_nothedge) * (beta_nothedge);
 
-        cout << cov_factor_hedge_tilde_r.n_rows << " " << cov_factor_hedge_tilde_r.n_cols << endl;
+        // cout << cov_factor_hedge_tilde_r.n_rows << " " << cov_factor_hedge_tilde_r.n_cols << endl;
+
+        cov_tilde_r = trans(beta_nothedge) * (trans(theta_factor_nothedge) * Sigma_z * (theta_factor_nothedge) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * beta_nothedge + diagmat(Psi);
+
+        cov_new_assets = join_cols(join_rows(cov_factor_hedge, cov_factor_hedge_tilde_r), join_rows(trans(cov_factor_hedge_tilde_r), cov_tilde_r));
+
+        // cout << cov_factor_hedge.n_rows << " " << cov_factor_hedge.n_cols << endl;
+        // cout << cov_factor_hedge_tilde_r.n_rows << " " << cov_factor_hedge_tilde_r.n_cols << endl;
+
     // cout << K << endl;
         mu_r_tilde = alpha + trans(beta_nothedge) * mu_factor_nothedge; 
         // cov_new_assets = ()
