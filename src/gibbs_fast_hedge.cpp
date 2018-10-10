@@ -111,6 +111,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     arma::mat cov_tilde_r;
     arma::mat theta_factor_hedge;
     arma::mat theta_factor_nothedge;
+    arma::mat mu_new_assets;
 
     // initialize outputs
     arma::mat Gamma_R_output(nsamps, Gamma_R.n_elem);
@@ -125,6 +126,8 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
     arma::mat Sigma_z_output(nsamps, pow(M, 2));
     arma::mat weight_output(nsamps, N);
     arma::mat Sigma_f_output(nsamps, pow(K, 2));
+    arma::mat mu_new_assets_output(nsamps, N + n_hedge);
+    arma::mat cov_new_assets_output(nsamps, pow(N + n_hedge, 2));
 
     // MLE estimators for
 
@@ -184,7 +187,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         beta = trans(Gamma_R.rows(1, K));
 
 
-        cout << "--------------------" << endl;
+        // cout << "--------------------" << endl;
         // cout << beta.n_rows << " " << beta.n_cols << endl;
         // cout << Z.n_rows << " " << Z.n_cols << endl;
         // cout << W_Z.n_rows << " " << W_Z.n_cols << endl;
@@ -266,10 +269,11 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // cout << cov_factor_hedge.n_rows << " " << cov_factor_hedge.n_cols << endl;
         // cout << cov_factor_hedge_tilde_r.n_rows << " " << cov_factor_hedge_tilde_r.n_cols << endl;
 
-    // cout << K << endl;
+        // cout << K << endl;
         mu_r_tilde = alpha + trans(beta_nothedge) * mu_factor_nothedge; 
         // cov_new_assets = ()
 
+        mu_new_assets = join_cols(mu_factor_hedge, mu_r_tilde);
 
         // save samples
         cov_output.row(i) = trans(vectorise(cov_assets));
@@ -284,6 +288,9 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         Sigma_v_output.row(i) = trans(vectorise(Sigma_v));
         weight_output.row(i) = trans(weight);
         Sigma_f_output.row(i) = trans(vectorise(Sigma_f));
+        mu_new_assets_output.row(i) = trans(mu_new_assets);
+        cov_new_assets_output.row(i) = trans(vectorise(cov_new_assets));
+
     }
 
     return Rcpp::List::create(
@@ -298,5 +305,8 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         Named("cov_assets") = cov_output,
         Named("Sigma_z") = Sigma_z_output,
         Named("weights") = weight_output,
-        Named("Sigma_f") = Sigma_f_output);
+        Named("Sigma_f") = Sigma_f_output,
+        Named("mu_new_assets") = mu_new_assets_output,
+        Named("cov_new_assets") = cov_new_assets_output
+    );
 }
