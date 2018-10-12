@@ -159,6 +159,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         Omega_F = Omega_F_output.row(i);
         Gamma_R.reshape(K + 1, N);
         Omega_F.reshape(M + 1, K);
+        Psi = vectorise(Psi_output.row(i));
         res_R = R - H * Gamma_R;
         res_F = F - X * Omega_F;
 
