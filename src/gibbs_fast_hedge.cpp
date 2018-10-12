@@ -151,8 +151,6 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         // second regression
         // regress F on X
 
-        // rmultireg_IW_singlerun(F, X, A_f_prior_mean, A_f_prior_precision, nu, V_F, Omega_F, Sigma_u);
-
         // compute residuals of first two regressions
 
         Gamma_R = Gamma_R_output.row(i);
@@ -186,21 +184,6 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         B = trans(Delta.rows(1, M));
         alpha = trans(Gamma_R.row(0));
         beta = trans(Gamma_R.rows(1, K));
-
-
-        // cout << "--------------------" << endl;
-        // cout << beta.n_rows << " " << beta.n_cols << endl;
-        // cout << Z.n_rows << " " << Z.n_cols << endl;
-        // cout << W_Z.n_rows << " " << W_Z.n_cols << endl;
-        // cout << Delta.n_rows << " " << Delta.n_cols << endl;
-        // cout << A.n_cols << " " << A.n_rows << endl;
-        // cout << B.n_cols << " " << B.n_rows << endl;
-        // cout << alpha.n_cols << " " << alpha.n_rows << endl;
-        // cout << beta.n_cols << " " << beta.n_rows << endl;
-        // cout << K << endl;
-
-
-
         theta = trans(Omega_F.row(0));
         gamma = trans(Omega_F.rows(1, M));
 
@@ -252,27 +235,18 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
             theta_factor_nothedge = Omega_F.submat(1, n_hedge, M, K - 1);
         }
         
+        // cov_factor_hedge_tilde_r = (trans(theta_factor_hedge) * Sigma_z * theta_factor_nothedge + cov_factor_hedge_nothedge) * (beta_nothedge);
 
-        // cout << Omega_F.n_rows << " " << Omega_F.n_cols << endl;
-        // cout << M << " " << K << endl;
+        cov_factor_hedge_tilde_r = cov_factor_hedge_nothedge * beta_nothedge;
 
-        // cout << theta_factor_hedge.n_rows << " " << theta_factor_hedge.n_cols << endl;
-        // cout << theta_factor_nothedge.n_rows << " " << theta_factor_nothedge.n_cols << endl;
+        // cov_tilde_r = trans(beta_nothedge) * (trans(theta_factor_nothedge) * Sigma_z * (theta_factor_nothedge) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * beta_nothedge + diagmat(Psi);
 
-        cov_factor_hedge_tilde_r = (trans(theta_factor_hedge) * Sigma_z * theta_factor_nothedge + cov_factor_hedge_nothedge) * (beta_nothedge);
+        cov_tilde_r = trans(beta_nothedge) * cov_factor_nothedge * beta_nothedge + diagmat(Psi);
 
-        // cout << cov_factor_hedge_tilde_r.n_rows << " " << cov_factor_hedge_tilde_r.n_cols << endl;
-
-        cov_tilde_r = trans(beta_nothedge) * (trans(theta_factor_nothedge) * Sigma_z * (theta_factor_nothedge) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * beta_nothedge + diagmat(Psi);
 
         cov_new_assets = join_cols(join_rows(cov_factor_hedge, cov_factor_hedge_tilde_r), join_rows(trans(cov_factor_hedge_tilde_r), cov_tilde_r));
 
-        // cout << cov_factor_hedge.n_rows << " " << cov_factor_hedge.n_cols << endl;
-        // cout << cov_factor_hedge_tilde_r.n_rows << " " << cov_factor_hedge_tilde_r.n_cols << endl;
-
-        // cout << K << endl;
         mu_r_tilde = alpha + trans(beta_nothedge) * mu_factor_nothedge; 
-        // cov_new_assets = ()
 
         mu_new_assets = join_cols(mu_factor_hedge, mu_r_tilde);
 
