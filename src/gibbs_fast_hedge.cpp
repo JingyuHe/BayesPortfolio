@@ -188,7 +188,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         gamma = trans(Omega_F.rows(1, M));
 
         // column vector, mean of each factor
-        mu_factors = (theta + gamma * (inv(B + eye(B.n_cols, B.n_cols)) * A));
+        mu_factors = (theta + gamma * (inv(eye(B.n_cols, B.n_cols) - B) * A));
 
         // column vector, mean of each asset
         mu_assets = alpha + beta * mu_factors;
