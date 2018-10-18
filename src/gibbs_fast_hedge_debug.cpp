@@ -33,7 +33,8 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
     // R: T * N returns
     // F: T * K factors
     // Z: T * M other variables
-    // X: T * M, one period lagged Z
+    // X: T * (M+1), one period lagged Z, plus column of 1 for intercept 
+    // X should be ready in R
 
     size_t T = R.n_rows;
     size_t N = R.n_cols;
@@ -144,6 +145,7 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
 
     // rmultire
 
+
     for (size_t i = 0; i < nsamps; i++)
     {
 
@@ -183,6 +185,9 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
         // 0 ~ M are Omega_z
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
+        // Delta = trans(Delta);
+
+
         Sigma_z = trans(Delta.rows(0, M));
         xi_0 = trans(Delta.row(0));
         xi_1 = trans(Delta.rows(1, M));
@@ -194,7 +199,6 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
         Sigma_v = Sigma_zz_condition + Sigma_ve_Psi_inv * trans(Sigma_ve) + Sigma_vu_Sigma_u_inv * trans(Sigma_vu);
 
         // compute weights
-
         alpha = trans(Gamma_R.row(0));
         beta = trans(Gamma_R.rows(1, K));
         theta_0 = trans(Omega_F.row(0));
@@ -224,12 +228,10 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
 
 
         // cout << mu_assets.n_rows << " " << mu_assets.n_cols << endl;
-
-
         // weight on asset (ft, tilde{R}_t)
         if(n_hedge == 1){
-            beta_f = beta.row(0);
-            beta_g = beta.rows(1, K - 1);
+            beta_f = beta.col(0);
+            beta_g = beta.cols(1, K - 1);
             mu_factor_f = mu_factors.row(0);
             mu_factor_g = mu_factors.rows(1, K - 1);
             cov_factor_f = Sigma_f.submat(0, 0, 0, 0);
@@ -241,8 +243,8 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
             theta_factor_g = theta_1.rows(1, K - 1);
 
         }else{
-            beta_f = beta.rows(0, n_hedge - 1);
-            beta_g = beta.rows(n_hedge, K - 1);
+            beta_f = beta.cols(0, n_hedge - 1);
+            beta_g = beta.cols(n_hedge, K - 1);
             mu_factor_f = mu_factors.rows(0, n_hedge - 1);
             mu_factor_g = mu_factors.rows(n_hedge, K - 1);
             cov_factor_f = Sigma_f.submat(0, 0, n_hedge - 1, n_hedge - 1);
@@ -255,11 +257,14 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
             // theta_factor_g = Omega_F.submat(1, n_hedge, M, K - 1);
         }
         
-        // cov_factor_f_tilde_r = (trans(theta_factor_f) * Sigma_z * theta_factor_g + cov_factor_fg) * (beta_g);
+        // cov_factor_f_tilde_r = (theta_factor_f * Sigma_z * trans(theta_factor_g) + cov_factor_fg) * trans(beta_g);
+
 
         cov_factor_f_tilde_r = cov_factor_fg * trans(beta_g);
 
-        // cov_tilde_r = trans(beta_g) * (trans(theta_factor_g) * Sigma_z * (theta_factor_g) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * beta_g + diagmat(Psi);
+        // cout << " oko ko " << endl;
+
+        // cov_tilde_r = beta_g * (theta_factor_g * Sigma_z * trans(theta_factor_g) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * trans(beta_g) + diagmat(Psi);
 
         cov_tilde_r = beta_g * cov_factor_g * trans(beta_g) + diagmat(Psi);
 
