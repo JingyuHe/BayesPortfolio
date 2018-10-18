@@ -160,6 +160,13 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
         Psi = vectorise(Psi_output.row(i));
         res_R = R - H * Gamma_R;
         res_F = F - X * Omega_F;
+        Sigma_u = Sigma_u_output.row(i);
+        Sigma_u.reshape(K, K);
+
+        // cout << Sigma_u << endl;
+
+        // cout << Sigma_u << endl;
+        // inv(Sigma_u) ;
 
         // create regressors for the third regression
         W_Z = join_rows(join_rows(X, res_R), res_F);
