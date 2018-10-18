@@ -93,25 +93,29 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
     arma::mat B;
     arma::mat alpha;
     arma::mat beta;
-    arma::mat beta_hedge;
-    arma::mat beta_nothedge;
+    arma::mat beta_f;
+    arma::mat beta_g;
     arma::mat theta_0;
     arma::mat theta_1;
     arma::mat weight;
     arma::mat Sigma_f;
     arma::mat mu_factors;
-    arma::mat mu_factor_hedge;
-    arma::mat mu_factor_nothedge;
+    arma::mat mu_factor_f;
+    arma::mat mu_factor_g;
     arma::mat mu_r_tilde;
-    arma::mat cov_factor_hedge;
-    arma::mat cov_factor_nothedge;
-    arma::mat cov_factor_hedge_nothedge;
+    arma::mat cov_factor_f;
+    arma::mat cov_factor_g;
+    arma::mat cov_factor_fg;
     arma::mat cov_new_assets;
-    arma::mat cov_factor_hedge_tilde_r;
+    arma::mat cov_factor_f_tilde_r;
     arma::mat cov_tilde_r;
-    arma::mat theta_factor_hedge;
-    arma::mat theta_factor_nothedge;
+    arma::mat theta_factor_f;
+    arma::mat theta_factor_g;
+    arma::mat Simga_z;
+    arma::mat xi_0;
+    arma::mat xi_1;
     arma::mat mu_new_assets;
+    arma::mat mu_z;
 
     // initialize outputs
     arma::mat Gamma_R_output(nsamps, Gamma_R.n_elem);
@@ -179,6 +183,9 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
         // 0 ~ M are Omega_z
         // M + 1 ~ M + K are Sigma_vu_Sigma_u_inv
         // M + K + 1 ~ M + K + N are Sigma_ve_Psi_inv
+        Sigma_z = trans(Delta.rows(0, M));
+        xi_0 = trans(Delta.row(0));
+        xi_1 = trans(Delta.rows(1, M));
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M + 1, M + K));
         Sigma_ve_Psi_inv = trans(Delta.rows(M + K + 1, M + K + N));
 
@@ -187,27 +194,27 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
         Sigma_v = Sigma_zz_condition + Sigma_ve_Psi_inv * trans(Sigma_ve) + Sigma_vu_Sigma_u_inv * trans(Sigma_vu);
 
         // compute weights
-        A = trans(Delta.row(0));
-        B = trans(Delta.rows(1, M));
-        // B = Delta.rows(1, M);
+
         alpha = trans(Gamma_R.row(0));
         beta = trans(Gamma_R.rows(1, K));
         theta_0 = trans(Omega_F.row(0));
         theta_1 = trans(Omega_F.rows(1, M));
 
+
+        mu_z = inv(eye(M, M) - xi_1) * xi_0;
+
         // column vector, mean of each factor
-        mu_factors = (theta_0 + theta_1 * (inv(eye(B.n_cols, B.n_cols) - B) * A));
+        mu_factors = theta_0 + theta_1 * mu_z;
 
         // column vector, mean of each asset
         mu_assets = alpha + beta * mu_factors;
 
         // covariance of all macro variables
-        Sigma_z = inv(eye(pow(M, 2), pow(M, 2)) - kron(trans(B), trans(B))) * vectorise(Sigma_v);
+        Sigma_z = inv(eye(pow(M, 2), pow(M, 2)) - kron(xi_1, xi_1)) * vectorise(Sigma_v);
         Sigma_z.reshape(M, M);
 
         // covariance of all factors
         Sigma_f = theta_1 * Sigma_z * trans(theta_1) + Sigma_u;
-
 
 
         // This is weight on asset R_t
@@ -221,42 +228,47 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
 
         // weight on asset (ft, tilde{R}_t)
         if(n_hedge == 1){
-            beta_hedge = trans(beta.col(0));
-            beta_nothedge = trans(beta.cols(1, K - 1));
-            mu_factor_hedge = mu_factors.row(0);
-            mu_factor_nothedge = mu_factors.rows(1, K - 1);
-            cov_factor_hedge = Sigma_f.submat(0, 0, 0, 0);
-            cov_factor_nothedge = Sigma_f.submat(1, 1, K - 1, K - 1);
-            cov_factor_hedge_nothedge = Sigma_f.submat(0, 1, 0, K - 1);
-            theta_factor_hedge = Omega_F.submat(1, 0, M, 0);
-            theta_factor_nothedge = Omega_F.submat(1, 1, M, K - 1);
+            beta_f = beta.row(0);
+            beta_g = beta.rows(1, K - 1);
+            mu_factor_f = mu_factors.row(0);
+            mu_factor_g = mu_factors.rows(1, K - 1);
+            cov_factor_f = Sigma_f.submat(0, 0, 0, 0);
+            cov_factor_g = Sigma_f.submat(1, 1, K - 1, K - 1);
+            cov_factor_fg = Sigma_f.submat(0, 1, 0, K - 1);
+            // theta_factor_f = Omega_F.submat(1, 0, M, 0);
+            // theta_factor_g = Omega_F.submat(1, 1, M, K - 1);
+            theta_factor_f = theta_1.row(0);
+            theta_factor_g = theta_1.rows(1, K - 1);
 
         }else{
-            beta_hedge = trans(beta.cols(0, n_hedge - 1));
-            beta_nothedge = trans(beta.cols(n_hedge, K - 1));
-            mu_factor_hedge = mu_factors.rows(0, n_hedge - 1);
-            mu_factor_nothedge = mu_factors.rows(n_hedge, K - 1);
-            cov_factor_hedge = Sigma_f.submat(0, 0, n_hedge - 1, n_hedge - 1);
-            cov_factor_nothedge = Sigma_f.submat(n_hedge, n_hedge, K - 1, K - 1);
-            cov_factor_hedge_nothedge = Sigma_f.submat(0, n_hedge, n_hedge - 1, K - 1);
-            theta_factor_hedge = Omega_F.submat(1, 0, M, n_hedge - 1);
-            theta_factor_nothedge = Omega_F.submat(1, n_hedge, M, K - 1);
+            beta_f = beta.rows(0, n_hedge - 1);
+            beta_g = beta.rows(n_hedge, K - 1);
+            mu_factor_f = mu_factors.rows(0, n_hedge - 1);
+            mu_factor_g = mu_factors.rows(n_hedge, K - 1);
+            cov_factor_f = Sigma_f.submat(0, 0, n_hedge - 1, n_hedge - 1);
+            cov_factor_g = Sigma_f.submat(n_hedge, n_hedge, K - 1, K - 1);
+            cov_factor_fg = Sigma_f.submat(0, n_hedge, n_hedge - 1, K - 1);
+
+            theta_factor_f = theta_1.rows(0, n_hedge - 1);
+            theta_factor_g = theta_1.rows(n_hedge, K - 1);
+            // theta_factor_f = Omega_F.submat(1, 0, M, n_hedge - 1);
+            // theta_factor_g = Omega_F.submat(1, n_hedge, M, K - 1);
         }
         
-        // cov_factor_hedge_tilde_r = (trans(theta_factor_hedge) * Sigma_z * theta_factor_nothedge + cov_factor_hedge_nothedge) * (beta_nothedge);
+        // cov_factor_f_tilde_r = (trans(theta_factor_f) * Sigma_z * theta_factor_g + cov_factor_fg) * (beta_g);
 
-        cov_factor_hedge_tilde_r = cov_factor_hedge_nothedge * beta_nothedge;
+        cov_factor_f_tilde_r = cov_factor_fg * trans(beta_g);
 
-        // cov_tilde_r = trans(beta_nothedge) * (trans(theta_factor_nothedge) * Sigma_z * (theta_factor_nothedge) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * beta_nothedge + diagmat(Psi);
+        // cov_tilde_r = trans(beta_g) * (trans(theta_factor_g) * Sigma_z * (theta_factor_g) + Sigma_u.submat(n_hedge, n_hedge, K - 1, K - 1)) * beta_g + diagmat(Psi);
 
-        cov_tilde_r = trans(beta_nothedge) * cov_factor_nothedge * beta_nothedge + diagmat(Psi);
+        cov_tilde_r = beta_g * cov_factor_g * trans(beta_g) + diagmat(Psi);
 
 
-        cov_new_assets = join_cols(join_rows(cov_factor_hedge, cov_factor_hedge_tilde_r), join_rows(trans(cov_factor_hedge_tilde_r), cov_tilde_r));
+        cov_new_assets = join_cols(join_rows(cov_factor_f, cov_factor_f_tilde_r), join_rows(trans(cov_factor_f_tilde_r), cov_tilde_r));
 
-        mu_r_tilde = alpha + trans(beta_nothedge) * mu_factor_nothedge; 
+        mu_r_tilde = alpha + beta_g * mu_factor_g; 
 
-        mu_new_assets = join_cols(mu_factor_hedge, mu_r_tilde);
+        mu_new_assets = join_cols(mu_factor_f, mu_r_tilde);
 
         // save samples
         cov_output.row(i) = trans(vectorise(cov_assets));

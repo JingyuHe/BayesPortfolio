@@ -162,7 +162,7 @@ Rcpp::List gibbs_fast_hedge(arma::mat R, arma::mat F, arma::mat Z, arma::mat X, 
         res_F = F - X * Omega_F;
         Sigma_u = Sigma_u_output.row(i);
         Sigma_u.reshape(K, K);
-        
+
         // create regressors for the third regression
         W_Z = join_rows(join_rows(X, res_R), res_F);
 
