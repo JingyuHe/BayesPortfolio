@@ -188,7 +188,7 @@ Rcpp::List gibbs_fast_hedge_debug(arma::mat R, arma::mat F, arma::mat Z, arma::m
         // Delta = trans(Delta);
 
 
-        Sigma_z = trans(Delta.rows(0, M));
+        Omega_z = trans(Delta.rows(0, M));
         xi_0 = trans(Delta.row(0));
         xi_1 = trans(Delta.rows(1, M));
         Sigma_vu_Sigma_u_inv = trans(Delta.rows(M + 1, M + K));
