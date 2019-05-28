@@ -1,13 +1,11 @@
 Package: BayesPortfolio
 Type: Package
 Title: What the package does (short line)
-Version: 1.4
-Date: 2018-10-06
+Version: 1.0
+Date: 2019-05-28
 Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Imports: Rcpp (>= 0.12.18)
+Imports: Rcpp (>= 1.0.1)
 LinkingTo: Rcpp, RcppArmadillo
-NeedsCompilation: yes
-Packaged: 2018-09-17 16:19:01 UTC; jingyuhe
