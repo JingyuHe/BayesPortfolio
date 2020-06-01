@@ -91,6 +91,7 @@ List rsurGibbs_rcpp_loop(List const& regdata, vec const& indreg, vec const& cumn
     for (reg=1; reg<nreg; reg++){
       Xtipyti = join_cols(Xtipyti, trans(regdata_vector[reg].X)*Ydti(span::all,reg)); //join_cols is analogous to rbind()
     }     
+    
     IR = solve(trimatu(chol(XtipXti + A)), eye(nvar,nvar)); //trimatu interprets the matrix as upper triangular and makes solve more efficient
     btilde = (IR*trans(IR)) * (Xtipyti + Abetabar);
     beta = btilde + IR*vec(rnorm(nvar));
