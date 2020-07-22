@@ -7,13 +7,3 @@ importFrom(grDevices, dev.interactive, devAskNewPage, terrain.colors)
 exportPattern("^[[:alpha:]]+")
 export(rsurGibbs_hierarchical, rsurGibbs)
 
-
-
-## register S3 methods
-S3method(plot, bayesm.mat)
-S3method(plot, bayesm.nmix)
-S3method(plot, bayesm.hcoef)
-S3method(summary, bayesm.mat)
-S3method(summary, bayesm.var)
-S3method(summary, bayesm.nmix)
-

@@ -83,7 +83,7 @@ List rsurGibbs_hierarchical_rcpp_loop(List const& regdata, vec const& indreg, ve
 
   // cout << "delta beta " << deltabeta << endl;
 
-  Vdeltabeta = 2 * p * eye(p, p);
+  Vdeltabeta = (p + 3) * eye(p, p);
 
   mat InInKor = kron(eye(p, p), ones<mat>(p, 1));
  
@@ -110,33 +110,35 @@ List rsurGibbs_hierarchical_rcpp_loop(List const& regdata, vec const& indreg, ve
     btilde = (IR*trans(IR)) * (Xtipyti + Abetabar);
     beta = btilde + IR*vec(rnorm(nvar));
 
-
     // now betabar | beta
     beta2 = trans(beta);
     beta2.reshape((regdatai_struct.X).n_cols, nreg);
+
     beta2 = trans(beta2);
     betabar = mean(beta2, 0);
-    IR = chol(deltabeta / (double) p, "lower");
+    
+    IR = chol(deltabeta / (double) nreg, "lower");
     betabar = trans(betabar) + IR * vec(rnorm(p));
 
 
     // now deltabeta | beta
     Ebeta = trans(beta2);
+
     for(int k = 0; k < Ebeta.n_cols; k++){
       Ebeta.col(k) = Ebeta.col(k) - (betabar);
     }
 
     ucholinv = solve(trimatu(chol(Ebeta * trans(Ebeta) + Vdeltabeta)), eye(p, p));
     EEVinv = ucholinv * trans(ucholinv);
-    rwout = rwishart(2 * p + p, EEVinv);
+    rwout = rwishart(nreg + p + 3, EEVinv);
     deltabeta = as<mat>(rwout["IW"]);
     deltabetainv = as<mat>(rwout["W"]);
 
     // cout << deltabeta << endl;
 
     // update prior parameter
-    A = kron(eye(nreg, nreg), deltabetainv);
-    Abetabar = (kron(eye(nreg, nreg), deltabetainv)) * (kron(ones<mat>(nreg, 1), betabar));
+    // A = kron(eye(nreg, nreg), deltabetainv);
+    // Abetabar = (kron(eye(nreg, nreg), deltabetainv)) * (kron(ones<mat>(nreg, 1), betabar));
 
 
     //now draw Sigma | beta
