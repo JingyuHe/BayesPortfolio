@@ -2,9 +2,9 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 rsurGibbs_rcpp_loop <- function(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint) {
-    .Call('bayesm_rsurGibbs_rcpp_loop', PACKAGE = 'bayesm', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
+    .Call('BayesPortfolio_rsurGibbs_rcpp_loop', PACKAGE = 'BayesPortfolio', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
 }
 
 rsurGibbs_hierarchical_rcpp_loop <- function(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint) {
-    .Call('bayesm_rsurGibbs_hierarchical_rcpp_loop', PACKAGE = 'bayesm', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
+    .Call('BayesPortfolio_rsurGibbs_hierarchical_rcpp_loop', PACKAGE = 'BayesPortfolio', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
 }

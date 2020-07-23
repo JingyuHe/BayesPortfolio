@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
   
 // [[Rcpp::export]]
 List runireg_rcpp_loop(vec const& y, mat const& X, vec const& betabar, mat const& A, double nu, double ssq, 

@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
   
 // [[Rcpp::export]]
 List rwishart(double nu, mat const& V){

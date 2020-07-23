@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
  
 // [[Rcpp::export]]
 NumericVector rtrun(NumericVector const& mu, NumericVector const& sigma, 

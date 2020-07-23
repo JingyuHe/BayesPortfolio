@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
 
 //[[Rcpp::export]]
 vec breg(vec const& y, mat const& X, vec const& betabar, mat const& A) {

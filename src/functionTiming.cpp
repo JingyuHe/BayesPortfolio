@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
  
 //The functions below are used to print the output from MCMC draws for many of the bayesm functions
 

@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
   
 // [[Rcpp::export]]
 List rsurGibbs_rcpp_loop(List const& regdata, vec const& indreg, vec const& cumnk, vec const& nk, mat const& XspXs, 

@@ -1,4 +1,4 @@
-#include "bayesm.h"
+#include "BayesPortfolio.h"
   
 // [[Rcpp::export]]
 List rmultireg(mat const& Y, mat const& X, mat const& Bbar, mat const& A, double nu, mat const& V) {
