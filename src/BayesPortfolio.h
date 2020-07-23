@@ -1,5 +1,5 @@
-#ifndef __BAYESM_H__
-#define __BAYESM_H__
+#ifndef __BayesPortfolio_H__
+#define __BayesPortfolio_H__
 
 #include <RcppArmadillo.h>
 #include <Rcpp.h>

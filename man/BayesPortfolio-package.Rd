@@ -4,6 +4,7 @@
 \docType{package}
 \title{
 \packageTitle{BayesPortfolio}
+Factor Investing: A Bayesian Hierarchical Approach.
 }
 \description{
 \packageDescription{BayesPortfolio}
@@ -13,24 +14,16 @@
 The DESCRIPTION file:
 \packageDESCRIPTION{BayesPortfolio}
 \packageIndices{BayesPortfolio}
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+This package implements the method from Factor Investing: A Bayesian Hierarchical Approach. It provide a seemingly regression model with hierarchical prior to model multiple assets, predict stock returns and estimate covariance matrix. Thus build mean-variance efficient portfolio.
 }
 \author{
-\packageAuthor{BayesPortfolio}
-
-Maintainer: \packageMaintainer{BayesPortfolio}
+Jingyu He, Gavin Guanhao Feng
 }
 \references{
-~~ Literature or other references for background information ~~
+Feng, Guanhao and He, Jingyu, Factor Investing: A Bayesian Hierarchical Approach (July 19, 2020). Available at SSRN: https://ssrn.com/abstract=3326617 or http://dx.doi.org/10.2139/ssrn.3326617
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-~~ simple examples of the most important functions ~~
 }

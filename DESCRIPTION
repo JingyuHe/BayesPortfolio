@@ -1,11 +1,12 @@
 Package: BayesPortfolio
 Type: Package
-Title: What the package does (short line)
+Title: Factor Investing: A Bayesian Hierarchical Approach
 Version: 1.0
-Date: 2019-05-28
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Date: 2020-07-23
+Author: Jingyu He, Gavin Guanhao Feng
+Maintainer: Jingyu He <jingyuhe@cityu.edu.hk>
+Description: This package implements the method from Factor Investing: A Bayesian Hierarchical Approach. It provide a seemingly regression model with hierarchical prior to model multiple assets, predict stock returns and estimate covariance matrix. Thus build mean-variance efficient portfolio.
+License: Apache License (== 2.0)
 Imports: Rcpp (>= 1.0.1)
 LinkingTo: Rcpp, RcppArmadillo
+NeedsCompilation: yes
