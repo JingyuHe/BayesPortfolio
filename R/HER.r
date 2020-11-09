@@ -1,14 +1,10 @@
-rsurGibbs_hierarchical=
+HER=
 function(Data,Prior,Mcmc)
 {
 # 
 # revision history:
-#          P. Rossi 9/05
-#          3/07 added classes
-#          9/14 changed to improve computations by avoiding Kronecker products
-#          W. Taylor 4/15 - added nprint option to MCMC argument
-# Purpose:
-#   implement Gibbs Sampler for SUR
+#   This function is adapted from the bayesm package, the gibbs sampler of Bayesian SUR model
+#   We add hierachical prior for the JoE paper
 # 
 # Arguments:
 #   Data -- regdata
@@ -152,7 +148,7 @@ Abetabar=A%*%betabar
 # Keunwoo Kim
 # 09/19/2014
 ###################################################################
-draws=rsurGibbs_hierarchical_rcpp_loop(regdata,indreg,cumnk,nk,XspXs,Sigmainv,A,Abetabar,nu,V,nvar,E,Y,R,keep,nprint)
+draws=HER_cpp(regdata,indreg,cumnk,nk,XspXs,Sigmainv,A,Abetabar,nu,V,nvar,E,Y,R,keep,nprint)
 ###################################################################
 
 attributes(draws$betadraw)$class=c("bayesm.mat","mcmc")

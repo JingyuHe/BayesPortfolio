@@ -1,5 +1,5 @@
 useDynLib(BayesPortfolio, .registration=TRUE)
 importFrom(stats, acf, cov, lm, optim, pnorm, rmultinom, rnorm, runif, var)
 exportPattern("^[[:alpha:]]+")
-export(rsurGibbs_hierarchical, rsurGibbs)
+export(HER)
 

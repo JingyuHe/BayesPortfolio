@@ -1,7 +1,7 @@
 #include "BayesPortfolio.h"
   
 // [[Rcpp::export]]
-List rsurGibbs_hierarchical_rcpp_loop(List const& regdata, vec const& indreg, vec const& cumnk, vec const& nk, mat const& XspXs, 
+List HER_cpp(List const& regdata, vec const& indreg, vec const& cumnk, vec const& nk, mat const& XspXs, 
                               mat Sigmainv, mat & A, vec & Abetabar, double nu, mat const& V, int nvar, 
                               mat E, mat const& Y, int R, int keep, int nprint){
 

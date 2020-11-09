@@ -5,6 +5,6 @@ rsurGibbs_rcpp_loop <- function(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, 
     .Call('BayesPortfolio_rsurGibbs_rcpp_loop', PACKAGE = 'BayesPortfolio', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
 }
 
-rsurGibbs_hierarchical_rcpp_loop <- function(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint) {
-    .Call('BayesPortfolio_rsurGibbs_hierarchical_rcpp_loop', PACKAGE = 'BayesPortfolio', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
+HER_cpp <- function(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint) {
+    .Call('BayesPortfolio_HER_cpp', PACKAGE = 'BayesPortfolio', regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint)
 }

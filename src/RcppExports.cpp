@@ -8,8 +8,8 @@
 using namespace Rcpp;
 
 // rsurGibbs_rcpp_loop
-List rsurGibbs_hierarchical_rcpp_loop(List const& regdata, vec const& indreg, vec const& cumnk, vec const& nk, mat const& XspXs, mat Sigmainv, mat & A, vec & Abetabar, double nu, mat const& V, int nvar, mat E, mat const& Y, int R, int keep, int nprint);
-RcppExport SEXP BayesPortfolio_rsurGibbs_hierarchical_rcpp_loop(SEXP regdataSEXP, SEXP indregSEXP, SEXP cumnkSEXP, SEXP nkSEXP, SEXP XspXsSEXP, SEXP SigmainvSEXP, SEXP ASEXP, SEXP AbetabarSEXP, SEXP nuSEXP, SEXP VSEXP, SEXP nvarSEXP, SEXP ESEXP, SEXP YSEXP, SEXP RSEXP, SEXP keepSEXP, SEXP nprintSEXP) {
+List HER_cpp(List const& regdata, vec const& indreg, vec const& cumnk, vec const& nk, mat const& XspXs, mat Sigmainv, mat & A, vec & Abetabar, double nu, mat const& V, int nvar, mat E, mat const& Y, int R, int keep, int nprint);
+RcppExport SEXP BayesPortfolio_HER_cpp(SEXP regdataSEXP, SEXP indregSEXP, SEXP cumnkSEXP, SEXP nkSEXP, SEXP XspXsSEXP, SEXP SigmainvSEXP, SEXP ASEXP, SEXP AbetabarSEXP, SEXP nuSEXP, SEXP VSEXP, SEXP nvarSEXP, SEXP ESEXP, SEXP YSEXP, SEXP RSEXP, SEXP keepSEXP, SEXP nprintSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,14 +29,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type R(RSEXP);
     Rcpp::traits::input_parameter< int >::type keep(keepSEXP);
     Rcpp::traits::input_parameter< int >::type nprint(nprintSEXP);
-    rcpp_result_gen = Rcpp::wrap(rsurGibbs_hierarchical_rcpp_loop(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint));
+    rcpp_result_gen = Rcpp::wrap(HER_cpp(regdata, indreg, cumnk, nk, XspXs, Sigmainv, A, Abetabar, nu, V, nvar, E, Y, R, keep, nprint));
     return rcpp_result_gen;
 END_RCPP
 }
 
 
 static const R_CallMethodDef CallEntries[] = {
-    {"BayesPortfolio_rsurGibbs_hierarchical_rcpp_loop", (DL_FUNC) &BayesPortfolio_rsurGibbs_hierarchical_rcpp_loop, 16},
+    {"BayesPortfolio_HER_cpp", (DL_FUNC) &BayesPortfolio_HER_cpp, 16},
     {NULL, NULL, 0}
 };
 
