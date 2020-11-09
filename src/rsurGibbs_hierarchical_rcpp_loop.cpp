@@ -5,9 +5,7 @@ List rsurGibbs_hierarchical_rcpp_loop(List const& regdata, vec const& indreg, ve
                               mat Sigmainv, mat & A, vec & Abetabar, double nu, mat const& V, int nvar, 
                               mat E, mat const& Y, int R, int keep, int nprint){
 
-// Keunwoo Kim 09/19/2014
-
-// Purpose: implement Gibbs Sampler for SUR
+// This function is adapted from rsurGibbs function in the bayesm package
 
 // Arguments:
 //   Data -- regdata

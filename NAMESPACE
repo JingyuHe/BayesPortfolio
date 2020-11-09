@@ -1,9 +1,5 @@
 useDynLib(BayesPortfolio, .registration=TRUE)
-importFrom(Rcpp, evalCpp)
-importFrom(utils, flush.console)
-importFrom(stats, acf, cov, dnbinom, dnorm, lm, median, optim, pnorm, qchisq, quantile, rmultinom, rnorm, runif, var)
-importFrom(graphics, abline, boxplot, bxp, contour, hist, image, lines, par, plot, plot.default, points, polygon, text, title)
-importFrom(grDevices, dev.interactive, devAskNewPage, terrain.colors)
+importFrom(stats, acf, cov, lm, optim, pnorm, rmultinom, rnorm, runif, var)
 exportPattern("^[[:alpha:]]+")
 export(rsurGibbs_hierarchical, rsurGibbs)
 
